@@ -46,6 +46,7 @@ export type AddItemType = {
   date: dayjs.Dayjs | null;
 };
 
+//金額入力フォーム
 const AddScheduleDialog: React.FC<Props> = (props) => {
   const { newDate, isOpen, doClose } = props;
 
