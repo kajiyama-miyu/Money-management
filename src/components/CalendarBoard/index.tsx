@@ -10,10 +10,18 @@ import {
   selectSchedules,
   ItemType,
   fetchCurrentData,
+  fetchCurrentIncome,
+  selectIncome,
+  IncomeType,
 } from "../../redux/addSchedule/slice";
 import { setSchedules } from "../../services/schedule";
-import { currentScheduleSlice } from "../../redux/currentSchedule/slice";
-import CurrentScheduleDialog from "../CurrentScheduleDialog";
+import {
+  selectCurrentDialogStatus,
+  currentScheduleSlice,
+  selectCurrentIncomeDialogStatus,
+} from "../../redux/currentSchedule/slice";
+import CurrentScheduleDialog from "../CurrentScheduleDialog/index";
+import CurrentIncomeDialog from "../CurrentScheduleDialog/income";
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
@@ -38,9 +46,14 @@ const days: Week = ["日", "月", "火", "水", "木", "金", "土"];
 const CalendarBoad: React.FC = () => {
   const calendarData: DayState = useSelector(selectCalendarData);
   const scheduleData = useSelector(selectSchedules);
-  console.log("schedule", scheduleData);
+  const incomeData = useSelector(selectIncome);
+
   //カレンダーの表示とスケジュールの表示を同時に行う
-  const calendar = setSchedules(createCalendar(calendarData), scheduleData);
+  const calendar = setSchedules(
+    createCalendar(calendarData),
+    scheduleData,
+    incomeData
+  );
 
   const [changeDate, setChangeDate] = useState(dayjs());
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -63,8 +76,22 @@ const CalendarBoad: React.FC = () => {
     dispatch(currentScheduleSlice.actions.setCurrentSchedule(schedule));
   };
 
+  const handleOpenCurrentIncomeData = (
+    income: IncomeType,
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    e.stopPropagation();
+
+    dispatch(currentScheduleSlice.actions.setOpenCurrentIncomeDialog());
+    dispatch(currentScheduleSlice.actions.setCurrentIncome(income));
+  };
+
   const handleCloseCurrentDialog = () => {
     dispatch(currentScheduleSlice.actions.setCloseCurrentDialog());
+  };
+
+  const handleCloseCurrentIncomeDialog = () => {
+    dispatch(currentScheduleSlice.actions.setCloseCurrentIncomeDialog());
   };
   const handleClose = () => {
     setDialogOpen(false);
@@ -72,6 +99,7 @@ const CalendarBoad: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchCurrentData({ userNum: userNum }));
+    dispatch(fetchCurrentIncome({ userNum: userNum }));
   }, [dispatch, userNum]);
 
   return (
@@ -90,13 +118,15 @@ const CalendarBoad: React.FC = () => {
             </Typography>
           </li>
         ))}
-        {calendar.map(({ date, schedules }) => (
+        {calendar.map(({ date, schedules, income }) => (
           <li key={date.toISOString()} onClick={() => handleOpen(date)}>
             <CalendarElement
               day={date}
               month={calendarData}
               schedules={schedules}
+              income={income}
               onClickSchedule={handleOpenCurrentData}
+              onClickIncome={handleOpenCurrentIncomeData}
             />
           </li>
         ))}
@@ -107,6 +137,7 @@ const CalendarBoad: React.FC = () => {
           doClose={() => handleClose()}
         />
         <CurrentScheduleDialog doClose={handleCloseCurrentDialog} />
+        <CurrentIncomeDialog doDialogClose={handleCloseCurrentIncomeDialog} />
       </GridList>
     </div>
   );
