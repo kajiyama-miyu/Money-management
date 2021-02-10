@@ -12,12 +12,14 @@ import {
   NoteOutlined,
   AccessTime,
   Close,
+  DeleteOutlineOutlined,
 } from "@material-ui/icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   selectCurrentDialogStatus,
   selectCurrentSchedule,
 } from "../../redux/currentSchedule/slice";
+import { deleteCurrentData } from "../../redux/addSchedule/slice";
 
 type Props = { doClose: () => void };
 
@@ -43,10 +45,19 @@ const CurrentScheduleDialog: React.FC<Props> = (props) => {
   const spacer = (top: number, bottom: number) => ({
     margin: `${top}px 0 ${bottom}px 0`,
   });
+  const dispatch = useDispatch();
+
+  const handleDeteleSchedule = () => {
+    dispatch(deleteCurrentData(currentData!));
+    doClose();
+  };
 
   return (
     <Dialog open={openStatus} onClose={doClose} maxWidth="xs" fullWidth>
       <DialogActions>
+        <IconButton onClick={handleDeteleSchedule} size="small">
+          <DeleteOutlineOutlined />
+        </IconButton>
         <div style={styles.closeButton}>
           <IconButton onClick={doClose} size="small">
             <Close />
