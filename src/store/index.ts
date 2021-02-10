@@ -3,12 +3,18 @@ import { configureStore } from "@reduxjs/toolkit";
 import covidReducer from "../store/piePlotSlice";
 import moneyReducer from "../store/moneyDataSlice";
 import amountReducer from "../store/totalAmountSlice";
+import calendarSlice from "../redux/calendar/slice";
+import scheduleSlice from "../redux/addSchedule/slice";
+import currentScheduleSlice from "../redux/currentSchedule/slice";
 
 export const store = configureStore({
   reducer: {
     covid: covidReducer,
     money: moneyReducer,
     totalAmount: amountReducer,
+    calendar: calendarSlice.reducer,
+    schedule: scheduleSlice.reducer,
+    current: currentScheduleSlice.reducer,
   },
 });
 
