@@ -6,6 +6,8 @@ import MoneyData from "../components/MoneyData";
 import Month from "../components/Month";
 import dayjs from "dayjs";
 import { fetchMoneyData } from "../store/moneyDataSlice";
+import TotalAmount from "../components/TotalAmount";
+import { fetchInitialState, fetchTotalIncome } from "../store/totalAmountSlice";
 
 const PiePlot: React.FC = () => {
   const dataDaily = useSelector(selectDataDaily);
@@ -37,9 +39,10 @@ const PiePlot: React.FC = () => {
   }>({ userNum: userNum, year: year, month: month });
 
   useEffect(() => {
-    // console.log(arg.month);
     dispatch(fetchDataDaily(arg));
     dispatch(fetchMoneyData(arg));
+    dispatch(fetchInitialState(arg));
+    dispatch(fetchTotalIncome(arg));
   }, [dispatch, arg]);
 
   //PieChart
@@ -75,13 +78,16 @@ const PiePlot: React.FC = () => {
 
   return (
     <div>
-      <Month
-        onClickNextMonth={onClickNextMonth}
-        onClickPreviousMonth={onClickPreviousMonth}
-        year={arg.year}
-        month={arg.month}
-      />
-      <Pie data={piePlotData} options={options} width={300} height={300} />
+      <div className="inc-exp-container">
+        <Month
+          onClickNextMonth={onClickNextMonth}
+          onClickPreviousMonth={onClickPreviousMonth}
+          year={arg.year}
+          month={arg.month}
+        />
+        <Pie data={piePlotData} options={options} width={300} height={300} />
+        <TotalAmount />
+      </div>
       <MoneyData />
     </div>
   );
