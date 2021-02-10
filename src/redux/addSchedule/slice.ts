@@ -56,6 +56,23 @@ export const fetchCurrentData = createAsyncThunk(
   }
 );
 
+export const deleteCurrentData = createAsyncThunk(
+  "schedules/delete",
+  async (arg: { moneyId: number }) => {
+    const { moneyId } = arg;
+    const { data } = await axios.get<number>(
+      "http://localhost:8080/deleteMoney",
+      {
+        params: {
+          moneyId,
+        },
+      }
+    );
+    console.log("data", data);
+    return { data: data };
+  }
+);
+
 export const scheduleSlice = createSlice({
   name: "schedule",
   initialState: init,
@@ -74,6 +91,17 @@ export const scheduleSlice = createSlice({
         ...state,
         items: actions.payload.data,
         isLoading: false,
+      };
+    });
+    builder.addCase(deleteCurrentData.fulfilled, (state, actions) => {
+      console.log("data", actions.payload.data);
+      const newDatas = state.items.filter(
+        (s) => s.moneyId !== actions.payload.data
+      );
+      return {
+        ...state,
+        isLoading: false,
+        items: newDatas,
       };
     });
   },
