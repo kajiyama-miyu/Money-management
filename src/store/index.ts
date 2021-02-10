@@ -2,11 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 // import {useSelector as rawUseSelector, TypedUseSelectorHook} from "react-redux";
 import covidReducer from "../store/piePlotSlice";
 import moneyReducer from "../store/moneyDataSlice";
+import amountReducer from "../store/totalAmountSlice";
 
 export const store = configureStore({
   reducer: {
     covid: covidReducer,
     money: moneyReducer,
+    totalAmount: amountReducer,
   },
 });
 
