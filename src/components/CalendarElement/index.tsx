@@ -16,7 +16,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   element: {
     borderRight: "1px solid #ccc",
     borderBottom: "1px solid #ccc",
-    height: "18vh",
+    height: "16vh",
   },
   date: {
     padding: "5px 0",
