@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { GridList, Typography } from "@material-ui/core";
+import {
+  GridList,
+  Typography,
+  Paper,
+  CssBaseline,
+  Grid,
+  Button,
+} from "@material-ui/core";
 import CalendarElement from "../CalendarElement";
-import { createCalendar } from "../../services/calendar";
+import {
+  createCalendar,
+  getNextMonth,
+  getPreviousMonth,
+} from "../../services/calendar";
 import dayjs from "dayjs";
 import { useSelector, useDispatch } from "react-redux";
-import { DayState, selectCalendarData } from "../../redux/calendar/slice";
+import calendarSlice, {
+  DayState,
+  selectCalendarData,
+} from "../../redux/calendar/slice";
 import AddScheduleDialog from "../../components/AddScheduleDialog";
 import {
   selectSchedules,
@@ -15,13 +29,11 @@ import {
   IncomeType,
 } from "../../redux/addSchedule/slice";
 import { setSchedules } from "../../services/schedule";
-import {
-  selectCurrentDialogStatus,
-  currentScheduleSlice,
-  selectCurrentIncomeDialogStatus,
-} from "../../redux/currentSchedule/slice";
+import { currentScheduleSlice } from "../../redux/currentSchedule/slice";
 import CurrentScheduleDialog from "../CurrentScheduleDialog/index";
 import CurrentIncomeDialog from "../CurrentScheduleDialog/income";
+import { makeStyles } from "@material-ui/core/styles";
+import { ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
@@ -36,6 +48,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     paddingTop: "10px",
   },
 };
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    margin: theme.spacing(5, 30),
+    padding: theme.spacing(5, 5),
+  },
+  yearmonth: {
+    margin: theme.spacing(2, 0, 1, 0),
+  },
+}));
 
 export type CalendarType = Array<dayjs.Dayjs>;
 
@@ -65,7 +87,9 @@ const CalendarBoad: React.FC = () => {
   };
 
   const dispatch = useDispatch();
+  const classes = useStyles();
 
+  //支出のダイアログオープン
   const handleOpenCurrentData = (
     schedule: ItemType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -76,6 +100,7 @@ const CalendarBoad: React.FC = () => {
     dispatch(currentScheduleSlice.actions.setCurrentSchedule(schedule));
   };
 
+  //収入のダイアログオープン
   const handleOpenCurrentIncomeData = (
     income: IncomeType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -86,10 +111,12 @@ const CalendarBoad: React.FC = () => {
     dispatch(currentScheduleSlice.actions.setCurrentIncome(income));
   };
 
+  //支出のダイアログクローズ
   const handleCloseCurrentDialog = () => {
     dispatch(currentScheduleSlice.actions.setCloseCurrentDialog());
   };
 
+  //収入のダイアログククローズ
   const handleCloseCurrentIncomeDialog = () => {
     dispatch(currentScheduleSlice.actions.setCloseCurrentIncomeDialog());
   };
@@ -97,48 +124,79 @@ const CalendarBoad: React.FC = () => {
     setDialogOpen(false);
   };
 
+  //収入と支出のデータ取得
   useEffect(() => {
     dispatch(fetchCurrentData({ userNum: userNum }));
     dispatch(fetchCurrentIncome({ userNum: userNum }));
   }, [dispatch, userNum]);
 
+  //翌月のカレンダーセット
+  const setNextMonthData = (): void => {
+    const nextMonth: DayState = getNextMonth(calendarData);
+    dispatch(calendarSlice.actions.carenderSetMonth(nextMonth));
+  };
+
+  //前月のカレンダーセット
+  const setPreviousData = (): void => {
+    const preMonth: DayState = getPreviousMonth(calendarData);
+    dispatch(calendarSlice.actions.carenderSetMonth(preMonth));
+  };
+
   return (
     <div style={styles.container}>
-      <GridList style={styles.grid} cols={7} spacing={0} cellHeight="auto">
-        {days.map((d: string) => (
-          <li key={d}>
-            <Typography
-              style={styles.days}
-              color="textSecondary"
-              align="center"
-              variant="caption"
-              component="div"
-            >
-              {d}
-            </Typography>
-          </li>
-        ))}
-        {calendar.map(({ date, schedules, income }) => (
-          <li key={date.toISOString()} onClick={() => handleOpen(date)}>
-            <CalendarElement
-              day={date}
-              month={calendarData}
-              schedules={schedules}
-              income={income}
-              onClickSchedule={handleOpenCurrentData}
-              onClickIncome={handleOpenCurrentIncomeData}
-            />
-          </li>
-        ))}
+      <CssBaseline />
+      <Paper className={classes.paper}>
+        <Grid container justify="space-between">
+          <Grid item>
+            <Button variant="outlined" onClick={setPreviousData}>
+              <ArrowBackIos />
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button variant="outlined" onClick={setNextMonthData}>
+              <ArrowForwardIos />
+            </Button>
+          </Grid>
+        </Grid>
+        <Typography variant="h4" align="center" className={classes.yearmonth}>
+          {calendarData.year}年 {calendarData.month}月
+        </Typography>
+        <GridList style={styles.grid} cols={7} spacing={0} cellHeight="auto">
+          {days.map((d: string) => (
+            <li key={d}>
+              <Typography
+                style={styles.days}
+                color="textSecondary"
+                align="center"
+                variant="caption"
+                component="div"
+              >
+                {d}
+              </Typography>
+            </li>
+          ))}
+          {calendar.map(({ date, schedules, income }) => (
+            <li key={date.toISOString()} onClick={() => handleOpen(date)}>
+              <CalendarElement
+                day={date}
+                month={calendarData}
+                schedules={schedules}
+                income={income}
+                onClickSchedule={handleOpenCurrentData}
+                onClickIncome={handleOpenCurrentIncomeData}
+              />
+            </li>
+          ))}
 
-        <AddScheduleDialog
-          newDate={changeDate}
-          isOpen={dialogOpen}
-          doClose={() => handleClose()}
-        />
-        <CurrentScheduleDialog doClose={handleCloseCurrentDialog} />
-        <CurrentIncomeDialog doDialogClose={handleCloseCurrentIncomeDialog} />
-      </GridList>
+          <AddScheduleDialog
+            newDate={changeDate}
+            isOpen={dialogOpen}
+            doClose={() => handleClose()}
+          />
+          <CurrentScheduleDialog doClose={handleCloseCurrentDialog} />
+          <CurrentIncomeDialog doDialogClose={handleCloseCurrentIncomeDialog} />
+        </GridList>
+      </Paper>
     </div>
   );
 };

@@ -1,17 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 import PiePlot from "./components/PiePlot";
-import Main from "./components/Main";
+import TabPanel from "./components/Main";
+import HeaderMenu from "./components/Navigation/header";
+import CalendarBoad from "./components/CalendarBoard";
 
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 const App: React.FC = () => {
+  const [value, setValue] = useState(0);
+
+  const handleChangeComponent = (e: React.ChangeEvent<{}>, value: number) => {
+    setValue(value);
+  };
+
   return (
-    <Router>
-      <Switch>
-        <Route path="/pieprot" component={PiePlot} exact />
-        <Route path="/" component={Main} exact />
-      </Switch>
-    </Router>
+    <div>
+      <HeaderMenu onChengeTab={handleChangeComponent} value={value} />
+      <TabPanel value={value} index={0}>
+        <CalendarBoad />
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <PiePlot />
+      </TabPanel>
+    </div>
   );
 };
 
