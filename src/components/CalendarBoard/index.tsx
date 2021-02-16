@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   GridList,
   Typography,
@@ -34,6 +34,11 @@ import CurrentScheduleDialog from "../CurrentScheduleDialog/index";
 import CurrentIncomeDialog from "../CurrentScheduleDialog/income";
 import { makeStyles } from "@material-ui/core/styles";
 import { ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
+import UpDateMoneyDialog from "../AddScheduleDialog/edit";
+import {
+  selectCurrentSchedule,
+  selectCurrentIncome,
+} from "../../redux/currentSchedule/slice";
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
@@ -65,64 +70,88 @@ type Week = Array<string>;
 
 const days: Week = ["日", "月", "火", "水", "木", "金", "土"];
 
-const CalendarBoad: React.FC = () => {
+const CalendarBoad: React.FC = React.memo(function CalendarBoad() {
   const calendarData: DayState = useSelector(selectCalendarData);
   const scheduleData = useSelector(selectSchedules);
   const incomeData = useSelector(selectIncome);
+  const currentData = useSelector(selectCurrentSchedule);
+  const currentIncome = useSelector(selectCurrentIncome);
 
   //カレンダーの表示とスケジュールの表示を同時に行う
-  const calendar = setSchedules(
-    createCalendar(calendarData),
-    scheduleData,
-    incomeData
-  );
+  const callbackCalendar = useMemo(() => {
+    const calendar = setSchedules(
+      createCalendar(calendarData),
+      scheduleData,
+      incomeData
+    );
+
+    return calendar;
+  }, [calendarData, scheduleData, incomeData]);
 
   const [changeDate, setChangeDate] = useState(dayjs());
   const [dialogOpen, setDialogOpen] = useState(false);
   const [userNum, setUserNum] = useState("abc");
+  const [edidDialog, setEditDialogOpen] = useState(false);
 
-  const handleOpen = (c: dayjs.Dayjs): void => {
+  const handleOpen = useCallback((c: dayjs.Dayjs): void => {
     setDialogOpen(true);
     setChangeDate(c);
-  };
+  }, []);
 
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  //支出のダイアログオープン
-  const handleOpenCurrentData = (
-    schedule: ItemType,
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
-    e.stopPropagation();
+  //編集のダイアログオープン
+  const handleEditOpen = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.stopPropagation();
 
-    dispatch(currentScheduleSlice.actions.setOpenCurrentDialog());
-    dispatch(currentScheduleSlice.actions.setCurrentSchedule(schedule));
-  };
+      setEditDialogOpen(true);
+      dispatch(currentScheduleSlice.actions.setCloseCurrentDialog());
+    },
+    [dispatch]
+  );
+
+  //支出のダイアログオープン
+  const handleOpenCurrentData = useCallback(
+    (schedule: ItemType, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.stopPropagation();
+
+      dispatch(currentScheduleSlice.actions.setOpenCurrentDialog());
+      dispatch(currentScheduleSlice.actions.setCurrentSchedule(schedule));
+    },
+    [dispatch]
+  );
 
   //収入のダイアログオープン
-  const handleOpenCurrentIncomeData = (
-    income: IncomeType,
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
-    e.stopPropagation();
+  const handleOpenCurrentIncomeData = useCallback(
+    (income: IncomeType, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.stopPropagation();
 
-    dispatch(currentScheduleSlice.actions.setOpenCurrentIncomeDialog());
-    dispatch(currentScheduleSlice.actions.setCurrentIncome(income));
-  };
+      dispatch(currentScheduleSlice.actions.setOpenCurrentIncomeDialog());
+      dispatch(currentScheduleSlice.actions.setCurrentIncome(income));
+    },
+    [dispatch]
+  );
 
   //支出のダイアログクローズ
-  const handleCloseCurrentDialog = () => {
+  const handleCloseCurrentDialog = useCallback(() => {
     dispatch(currentScheduleSlice.actions.setCloseCurrentDialog());
-  };
+  }, [dispatch]);
 
   //収入のダイアログククローズ
-  const handleCloseCurrentIncomeDialog = () => {
+  const handleCloseCurrentIncomeDialog = useCallback(() => {
     dispatch(currentScheduleSlice.actions.setCloseCurrentIncomeDialog());
-  };
-  const handleClose = () => {
+  }, [dispatch]);
+
+  const handleClose = useCallback(() => {
     setDialogOpen(false);
-  };
+  }, []);
+
+  //編集ダイアログクローズ
+  const handleEditClose = useCallback(() => {
+    setEditDialogOpen(false);
+  }, []);
 
   //収入と支出のデータ取得
   useEffect(() => {
@@ -131,16 +160,16 @@ const CalendarBoad: React.FC = () => {
   }, [dispatch, userNum]);
 
   //翌月のカレンダーセット
-  const setNextMonthData = (): void => {
+  const setNextMonthData = useCallback((): void => {
     const nextMonth: DayState = getNextMonth(calendarData);
     dispatch(calendarSlice.actions.carenderSetMonth(nextMonth));
-  };
+  }, [dispatch, calendarData]);
 
   //前月のカレンダーセット
-  const setPreviousData = (): void => {
+  const setPreviousData = useCallback((): void => {
     const preMonth: DayState = getPreviousMonth(calendarData);
     dispatch(calendarSlice.actions.carenderSetMonth(preMonth));
-  };
+  }, [dispatch, calendarData]);
 
   return (
     <div style={styles.container}>
@@ -175,7 +204,7 @@ const CalendarBoad: React.FC = () => {
               </Typography>
             </li>
           ))}
-          {calendar.map(({ date, schedules, income }) => (
+          {callbackCalendar.map(({ date, schedules, income }) => (
             <li key={date.toISOString()} onClick={() => handleOpen(date)}>
               <CalendarElement
                 day={date}
@@ -191,14 +220,25 @@ const CalendarBoad: React.FC = () => {
           <AddScheduleDialog
             newDate={changeDate}
             isOpen={dialogOpen}
-            doClose={() => handleClose()}
+            doClose={handleClose}
           />
-          <CurrentScheduleDialog doClose={handleCloseCurrentDialog} />
+          <CurrentScheduleDialog
+            doClose={handleCloseCurrentDialog}
+            onClickOpenEdit={handleEditOpen}
+          />
           <CurrentIncomeDialog doDialogClose={handleCloseCurrentIncomeDialog} />
+          <UpDateMoneyDialog
+            isEditOpen={edidDialog}
+            doClose={handleEditClose}
+            currentData={currentData}
+            currentIncome={currentIncome}
+            ArrayData={scheduleData}
+            ArrayIncome={incomeData}
+          />
         </GridList>
       </Paper>
     </div>
   );
-};
+});
 
 export default CalendarBoad;

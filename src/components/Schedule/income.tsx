@@ -3,13 +3,13 @@ import { IncomeType } from "../../redux/addSchedule/slice";
 
 const styles: { [key: string]: React.CSSProperties } = {
   schedule: {
-    width: "90%",
-    backgroundColor: "#F08080",
+    width: "100%",
+    backgroundColor: "rgb(121, 134, 203)",
     color: "#fff",
     borderRadius: "4px",
     fontSize: "14px",
-    padding: "1px, 4px",
-    margin: "1px, 0",
+    padding: "5px, 4px",
+    margin: "5px, 0",
     cursor: "pointer",
   },
 };
@@ -22,7 +22,7 @@ type Props = {
   ) => void;
 };
 
-const Income: React.FC<Props> = (props) => {
+const Income: React.FC<Props> = React.memo((props) => {
   const { income, onClickIncome } = props;
 
   return (
@@ -30,6 +30,6 @@ const Income: React.FC<Props> = (props) => {
       {income.income}円
     </div>
   );
-};
+});
 
 export default Income;

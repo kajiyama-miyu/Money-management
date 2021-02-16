@@ -5,6 +5,8 @@ import {
   AddIncomeType,
   AddItemType,
 } from "../../components/AddScheduleDialog/index";
+import { EditItemType } from "../../components/AddScheduleDialog/edit";
+import { access } from "fs";
 
 export type ItemType = {
   moneyId: number;
@@ -109,11 +111,33 @@ export const fetchCurrentIncome = createAsyncThunk(
   }
 );
 
+//支出の更新
+export const updateExpense = createAsyncThunk(
+  "schedule/updateExpense",
+  async (arg: EditItemType) => {
+    const { moneyId, userNum, amount, jenre, details, date } = arg;
+    const { data } = await axios.put<ItemType>(
+      "http://localhost:8080/putExpense",
+      {
+        moneyId: moneyId,
+        userNum: userNum,
+        amount: amount,
+        jenre: jenre,
+        details: details,
+        date: date,
+      }
+    );
+
+    return { data: data };
+  }
+);
+
 //支出削除
 export const deleteCurrentData = createAsyncThunk(
   "schedules/delete",
   async (arg: { moneyId: number }) => {
     const { moneyId } = arg;
+    console.log("delete", moneyId);
     const { data } = await axios.get<number>(
       "http://localhost:8080/deleteMoney",
       {
@@ -179,6 +203,13 @@ export const scheduleSlice = createSlice({
         incomeItems: actions.payload.data,
         isLoading: false,
       };
+    });
+
+    builder.addCase(updateExpense.fulfilled, (state, actions) => {
+      const index = state.items.findIndex(
+        (item) => item.moneyId === actions.payload.data.moneyId
+      );
+      state.items[index] = actions.payload.data;
     });
 
     //支出の削除(削除した瞬間に画面からも削除するための処理)

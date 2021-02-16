@@ -12,7 +12,8 @@ import {
   NoteOutlined,
   AccessTime,
   Close,
-  DeleteOutlineOutlined,
+  Delete,
+  Edit,
 } from "@material-ui/icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -21,14 +22,17 @@ import {
 } from "../../redux/currentSchedule/slice";
 import { deleteCurrentData } from "../../redux/addSchedule/slice";
 
-type Props = { doClose: () => void };
+type Props = {
+  doClose: () => void;
+  onClickOpenEdit: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+};
 
 const styles: { [key: string]: React.CSSProperties } = {
   closeButton: {
     textAlign: "right",
   },
   box: {
-    backgroundColor: "rgb(121, 134, 203)",
+    backgroundColor: "#F08080",
     width: "16px",
     height: "16px",
     display: "block",
@@ -37,8 +41,8 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-const CurrentScheduleDialog: React.FC<Props> = (props) => {
-  const { doClose } = props;
+const CurrentScheduleDialog: React.FC<Props> = React.memo((props) => {
+  const { doClose, onClickOpenEdit } = props;
   const currentData = useSelector(selectCurrentSchedule);
   const openStatus = useSelector(selectCurrentDialogStatus);
 
@@ -55,8 +59,16 @@ const CurrentScheduleDialog: React.FC<Props> = (props) => {
   return (
     <Dialog open={openStatus} onClose={doClose} maxWidth="xs" fullWidth>
       <DialogActions>
+        <IconButton
+          size="small"
+          onClick={(e) => {
+            onClickOpenEdit(e);
+          }}
+        >
+          <Edit />
+        </IconButton>
         <IconButton onClick={handleDeteleSchedule} size="small">
-          <DeleteOutlineOutlined />
+          <Delete />
         </IconButton>
         <div style={styles.closeButton}>
           <IconButton onClick={doClose} size="small">
@@ -81,7 +93,7 @@ const CurrentScheduleDialog: React.FC<Props> = (props) => {
                 </Grid>
                 <Grid item xs={10}>
                   <Typography variant="h5" component="h2">
-                    {currentData?.amount}
+                    {currentData?.amount} 円
                   </Typography>
                 </Grid>
               </Grid>
@@ -140,6 +152,6 @@ const CurrentScheduleDialog: React.FC<Props> = (props) => {
       </DialogContent>
     </Dialog>
   );
-};
+});
 
 export default CurrentScheduleDialog;

@@ -7,7 +7,7 @@ import {
   Tab,
   Tabs,
 } from "@material-ui/core";
-import { CalendarToday, PieChart } from "@material-ui/icons";
+import { CalendarToday, PieChart, TableChart } from "@material-ui/icons";
 
 const StyledAppbar = withStyles({
   root: { color: "#e0f2f1", backgroundColor: "#87CEFA", position: "static" },
@@ -26,10 +26,9 @@ export type Props = {
   value: number;
 };
 
-const HeaderMenu: React.FC<Props> = (props) => {
+const HeaderMenu: React.FC<Props> = React.memo(function HeaderMenu(props) {
   const { onChengeTab, value } = props;
 
-  console.log("props", value);
   return (
     <StyledAppbar>
       <StyledToolbar>
@@ -52,10 +51,11 @@ const HeaderMenu: React.FC<Props> = (props) => {
         >
           <Tab label="calendar" icon={<CalendarToday />} />
           <Tab label="graph" icon={<PieChart />} />
+          <Tab label="table" icon={<TableChart />} />
         </Tabs>
       </StyledToolbar>
     </StyledAppbar>
   );
-};
+});
 
 export default HeaderMenu;

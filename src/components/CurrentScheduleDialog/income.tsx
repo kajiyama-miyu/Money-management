@@ -28,7 +28,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     textAlign: "right",
   },
   box: {
-    backgroundColor: "#F08080",
+    backgroundColor: "rgb(121, 134, 203)",
     width: "16px",
     height: "16px",
     display: "block",
@@ -37,7 +37,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-const CurrentIncomeDialog: React.FC<Props> = (props) => {
+const CurrentIncomeDialog: React.FC<Props> = React.memo((props) => {
   const { doDialogClose } = props;
   const currentData = useSelector(selectCurrentIncome);
   const openStatus = useSelector(selectCurrentIncomeDialogStatus);
@@ -81,7 +81,7 @@ const CurrentIncomeDialog: React.FC<Props> = (props) => {
                 </Grid>
                 <Grid item xs={10}>
                   <Typography variant="h5" component="h2">
-                    {currentData?.income}
+                    {currentData?.income} 円
                   </Typography>
                 </Grid>
               </Grid>
@@ -140,6 +140,6 @@ const CurrentIncomeDialog: React.FC<Props> = (props) => {
       </DialogContent>
     </Dialog>
   );
-};
+});
 
 export default CurrentIncomeDialog;

@@ -1,9 +1,7 @@
 import React from "react";
-import CalendarBoard from "../components/CalendarBoard";
-import Navigation from "../components/Navigation";
+
 import dayjs from "dayjs";
 import "dayjs/locale/ja";
-import HeaderMenu from "../components/Navigation/header";
 
 dayjs.locale("ja");
 
@@ -12,7 +10,7 @@ export type Props = {
   value: number;
 };
 
-const TabPanel: React.FC<Props> = (props) => {
+const TabPanel: React.FC<Props> = React.memo(function TablePanel(props) {
   const { index, value, children } = props;
   console.log(index);
   console.log(value);
@@ -27,6 +25,6 @@ const TabPanel: React.FC<Props> = (props) => {
       {value === index && children}
     </div>
   );
-};
+});
 
 export default TabPanel;
