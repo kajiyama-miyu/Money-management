@@ -6,7 +6,6 @@ import HeaderMenu from "./components/Navigation/header";
 import CalendarBoad from "./components/CalendarBoard";
 // import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import MoneyData from "./components/MoneyData/MoneyData";
-import SwitchButton from "./components/MoneyData/SwitchButton";
 
 const App: React.FC = () => {
   const [value, setValue] = useState(0);

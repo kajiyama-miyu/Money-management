@@ -22,7 +22,11 @@ import { withStyles } from "@material-ui/styles";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import dayjs from "dayjs";
 import DateFnsUtils from "@date-io/date-fns";
-import { updateExpense, ItemType } from "../../redux/addSchedule/slice";
+import {
+  updateExpense,
+  IncomeType,
+  updateIncome,
+} from "../../redux/addSchedule/slice";
 import { useDispatch } from "react-redux";
 
 const spacer = { margin: "4px, 0" };
@@ -54,56 +58,57 @@ const Title = withStyles({
 type Props = {
   doClose: () => void;
   isEditOpen: boolean;
-  currentData: ItemType | null;
-  ArrayData: Array<ItemType>;
+  currentIncomeData: IncomeType | null;
+  ArrayIncomeData: Array<IncomeType>;
 };
 
-export type EditItemType = {
-  moneyId: number;
+export type EditIncomeType = {
+  incomeId: number;
   userNum: string;
-  amount: number;
+  income: number;
   jenre: string;
   details: string;
   date: dayjs.Dayjs | null;
 };
 
 //金額入力フォーム
-const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
-  const { isEditOpen, doClose, currentData, ArrayData } = props;
+const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
+  const { isEditOpen, doClose, currentIncomeData, ArrayIncomeData } = props;
 
   //編集したいデータのidと一致する物を抽出（idは唯一の値なので抽出できる値は一つだけ）
-  const newData = ArrayData.filter((s) => s.moneyId === currentData?.moneyId);
+  const newData = ArrayIncomeData.filter(
+    (s) => s.incomeId === currentIncomeData?.incomeId
+  );
 
   const [amount, setAmount] = useState(0);
-  const [expenseJenre, setExpenseJenre] = useState("食費");
+  const [incomeJenre, setIncomeJenre] = useState("給料");
   const [details, setDetails] = useState("");
   const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs());
   const [userNum, seUserNum] = useState<string>("abc");
-  const [moneyId, setMoneyId] = useState(0);
+  const [dialogStatus, setDialogStatus] = useState(true);
+  const [incomeId, setIncomeId] = useState(0);
 
   //編集したいデータをvalueにつめる(条件分岐で支出か収入かを分ける)
   useEffect(() => {
-    console.log("setNewData");
     if (newData !== null) {
       for (let n of newData) {
-        setMoneyId(n.moneyId);
-        setAmount(n.amount);
-        setExpenseJenre(n.jenre);
+        setIncomeId(n.incomeId);
+        setAmount(n.income);
+        setIncomeJenre(n.jenre);
         setDetails(n.details);
         setDate(dayjs(n.date));
       }
     }
-  }, [currentData, ArrayData]);
+  }, [currentIncomeData, ArrayIncomeData]);
 
   //金額をセット
   const handleAmountValue = (value: string) => {
     setAmount(Number(value));
   };
   //カテゴリーをセット
-  const handleExpenseJenreValue = (value: string) => {
-    setExpenseJenre(value);
+  const handleIncomeJenreValue = (value: string) => {
+    setIncomeJenre(value);
   };
-
   //メモをセット
   const handleDetailsValue = (value: string) => {
     setDetails(value);
@@ -118,10 +123,10 @@ const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
   };
 
   //valueをまとめて送るためのオブジェクト
-  const [arg, setArg] = useState<EditItemType>({
-    moneyId: 0,
+  const [argIncome, setArgIncome] = useState<EditIncomeType>({
+    incomeId: 0,
     userNum: "",
-    amount: 0,
+    income: 0,
     jenre: "",
     details: "",
     date: dayjs(),
@@ -130,26 +135,26 @@ const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setArg({
-      moneyId: moneyId,
+    setArgIncome({
+      incomeId: incomeId,
       userNum: userNum,
-      amount: amount,
-      jenre: expenseJenre,
+      income: amount,
+      jenre: incomeJenre,
       details: details,
       date: date,
     });
-  }, [userNum, amount, expenseJenre, details, date]);
+  }, [userNum, amount, details, date, incomeJenre, dialogStatus]);
 
   //保存したら元のデータをつめる
   const handleSaveData = () => {
-    dispatch(updateExpense(arg));
+    dispatch(updateIncome(argIncome));
 
     doClose();
 
     if (newData !== null) {
       for (let n of newData) {
-        setAmount(n.amount);
-        setExpenseJenre(n.jenre);
+        setAmount(n.income);
+        setIncomeJenre(n.jenre);
         setDetails(n.details);
         setDate(dayjs(n.date));
       }
@@ -162,13 +167,13 @@ const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
 
     if (newData !== null) {
       for (let n of newData) {
-        setAmount(n.amount);
-        setExpenseJenre(n.jenre);
+        setAmount(n.income);
+        setIncomeJenre(n.jenre);
         setDetails(n.details);
         setDate(dayjs(n.date));
       }
     }
-  }, [doClose, expenseJenre, newData]);
+  }, [doClose, incomeJenre, newData]);
 
   return (
     <Dialog open={isEditOpen} onClose={handleClose} maxWidth="xs" fullWidth>
@@ -198,17 +203,14 @@ const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
           </Grid>
           <Grid item xs={10}>
             <Select
-              value={expenseJenre}
+              value={incomeJenre}
               onChange={(e) => {
-                handleExpenseJenreValue(e.target.value as string);
+                handleIncomeJenreValue(e.target.value as string);
               }}
               fullWidth
               autoFocus
             >
-              <MenuItem value="食費">食費</MenuItem>
-              <MenuItem value="日用品">日用品</MenuItem>
-              <MenuItem value="衣服">衣服</MenuItem>
-              <MenuItem value="交通費">交通費</MenuItem>
+              <MenuItem value="給料">給料</MenuItem>
               <MenuItem value="その他">その他</MenuItem>
             </Select>
           </Grid>
@@ -262,4 +264,4 @@ const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
   );
 });
 
-export default UpDateMoneyDialog;
+export default UpDateIncomeDialog;
