@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { RootState } from "../rootReducer";
 import { AddItemType } from "../../components/AddScheduleDialog/index";
+import dayjs from "dayjs";
 
 export type ItemType = {
   moneyId: number;
@@ -9,7 +10,7 @@ export type ItemType = {
   amount: number;
   jenre: string;
   details: string;
-  date: Date;
+  date: dayjs.Dayjs;
 };
 
 export type ScheduleState = {
@@ -26,6 +27,7 @@ export const fetchMoneyData = createAsyncThunk(
   "schedules/createSchedule",
   async (arg: AddItemType) => {
     const { userNum, amount, jenre, details, date } = arg;
+    console.log(amount);
     const { data } = await axios.post<ItemType>(
       "http://localhost:8080/setMoney",
       {
@@ -93,17 +95,17 @@ export const scheduleSlice = createSlice({
         isLoading: false,
       };
     });
-    builder.addCase(deleteCurrentData.fulfilled, (state, actions) => {
-      console.log("data", actions.payload.data);
-      const newDatas = state.items.filter(
-        (s) => s.moneyId !== actions.payload.data
-      );
-      return {
-        ...state,
-        isLoading: false,
-        items: newDatas,
-      };
-    });
+    // builder.addCase(deleteCurrentData.fulfilled, (state, actions) => {
+    //   console.log("data", actions.payload.data);
+    //   const newDatas = state.items.filter(
+    //     (s) => s.moneyId !== actions.payload.data
+    //   );
+    //   return {
+    //     ...state,
+    //     isLoading: false,
+    //     items: newDatas,
+    //   };
+    // });
   },
 });
 
