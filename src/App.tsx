@@ -1,11 +1,22 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import "./App.css";
 import PiePlot from "./components/PiePlot";
-import Main from "./components/Main";
-
+import TabPanel from "./components/Main";
+import HeaderMenu from "./components/Navigation/header";
+import CalendarBoad from "./components/CalendarBoard";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import MoneyData from "./components/MoneyData/MoneyData";
+
 const App: React.FC = () => {
+  const [value, setValue] = useState(0);
+
+  const handleChangeComponent = useCallback(
+    (e: React.ChangeEvent<{}>, value: number) => {
+      setValue(value);
+    },
+    []
+  );
+
   return (
     <Router>
       <Switch>
@@ -14,6 +25,16 @@ const App: React.FC = () => {
         <Route path="/moneydata" component={MoneyData} exact></Route>
       </Switch>
     </Router>
+    <div>
+      <HeaderMenu onChengeTab={handleChangeComponent} value={value} />
+      <TabPanel value={value} index={0}>
+        <CalendarBoad />
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <PiePlot />
+      </TabPanel>
+      <TabPanel value={value} index={2}></TabPanel>
+    </div>
   );
 };
 

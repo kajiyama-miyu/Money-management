@@ -3,13 +3,13 @@ import { ItemType } from "../../redux/addSchedule/slice";
 
 const styles: { [key: string]: React.CSSProperties } = {
   schedule: {
-    width: "90%",
-    backgroundColor: "rgb(121, 134, 203)",
+    width: "100%",
+    backgroundColor: "#F08080",
     color: "#fff",
     borderRadius: "4px",
     fontSize: "14px",
-    padding: "1px, 4px",
-    margin: "1px, 0",
+    padding: "10px, 4px",
+    margin: "10px, 0",
     cursor: "pointer",
   },
 };
@@ -22,13 +22,13 @@ type Props = {
   ) => void;
 };
 
-const Schedule: React.FC<Props> = (props) => {
+const Schedule: React.FC<Props> = React.memo((props) => {
   const { schedule, onClickSchedule } = props;
   return (
     <div style={styles.schedule} onClick={(e) => onClickSchedule(schedule, e)}>
       {schedule.amount}円
     </div>
   );
-};
+});
 
 export default Schedule;

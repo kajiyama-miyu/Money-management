@@ -12,27 +12,23 @@ import {
   NoteOutlined,
   AccessTime,
   Close,
-  Delete,
-  Edit,
+  DeleteOutlineOutlined,
 } from "@material-ui/icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  selectCurrentDialogStatus,
-  selectCurrentSchedule,
+  selectCurrentIncomeDialogStatus,
+  selectCurrentIncome,
 } from "../../redux/currentSchedule/slice";
-import { deleteCurrentData } from "../../redux/addSchedule/slice";
+import { deleteCurrentIncomeData } from "../../redux/addSchedule/slice";
 
-type Props = {
-  doClose: () => void;
-  onClickOpenEdit: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-};
+type Props = { doDialogClose: () => void };
 
 const styles: { [key: string]: React.CSSProperties } = {
   closeButton: {
     textAlign: "right",
   },
   box: {
-    backgroundColor: "#F08080",
+    backgroundColor: "rgb(121, 134, 203)",
     width: "16px",
     height: "16px",
     display: "block",
@@ -41,10 +37,10 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-const CurrentScheduleDialog: React.FC<Props> = React.memo((props) => {
-  const { doClose, onClickOpenEdit } = props;
-  const currentData = useSelector(selectCurrentSchedule);
-  const openStatus = useSelector(selectCurrentDialogStatus);
+const CurrentIncomeDialog: React.FC<Props> = React.memo((props) => {
+  const { doDialogClose } = props;
+  const currentData = useSelector(selectCurrentIncome);
+  const openStatus = useSelector(selectCurrentIncomeDialogStatus);
 
   const spacer = (top: number, bottom: number) => ({
     margin: `${top}px 0 ${bottom}px 0`,
@@ -52,26 +48,18 @@ const CurrentScheduleDialog: React.FC<Props> = React.memo((props) => {
   const dispatch = useDispatch();
 
   const handleDeteleSchedule = () => {
-    dispatch(deleteCurrentData(currentData!));
-    doClose();
+    dispatch(deleteCurrentIncomeData(currentData!));
+    doDialogClose();
   };
 
   return (
-    <Dialog open={openStatus} onClose={doClose} maxWidth="xs" fullWidth>
+    <Dialog open={openStatus} onClose={doDialogClose} maxWidth="xs" fullWidth>
       <DialogActions>
-        <IconButton
-          size="small"
-          onClick={(e) => {
-            onClickOpenEdit(e);
-          }}
-        >
-          <Edit />
-        </IconButton>
         <IconButton onClick={handleDeteleSchedule} size="small">
-          <Delete />
+          <DeleteOutlineOutlined />
         </IconButton>
         <div style={styles.closeButton}>
-          <IconButton onClick={doClose} size="small">
+          <IconButton onClick={doDialogClose} size="small">
             <Close />
           </IconButton>
         </div>
@@ -93,7 +81,7 @@ const CurrentScheduleDialog: React.FC<Props> = React.memo((props) => {
                 </Grid>
                 <Grid item xs={10}>
                   <Typography variant="h5" component="h2">
-                    {currentData?.amount} 円
+                    {currentData?.income} 円
                   </Typography>
                 </Grid>
               </Grid>
@@ -154,4 +142,4 @@ const CurrentScheduleDialog: React.FC<Props> = React.memo((props) => {
   );
 });
 
-export default CurrentScheduleDialog;
+export default CurrentIncomeDialog;

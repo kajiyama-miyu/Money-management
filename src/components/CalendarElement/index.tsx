@@ -8,17 +8,18 @@ import {
   getMonth,
 } from "../../services/calendar";
 import { DayState } from "../../redux/calendar/slice";
-import { ItemType } from "../../redux/addSchedule/slice";
+import { ItemType, IncomeType } from "../../redux/addSchedule/slice";
 import Schedule from "../Schedule/index";
+import Income from "../Schedule/income";
 
 const styles: { [key: string]: React.CSSProperties } = {
   element: {
     borderRight: "1px solid #ccc",
     borderBottom: "1px solid #ccc",
-    height: "18vh",
+    height: "16vh",
   },
   date: {
-    padding: "5px 0",
+    padding: "5px 0 30px 0px",
     height: "24px",
   },
   today: {
@@ -40,14 +41,26 @@ type Props = {
   day: dayjs.Dayjs;
   month: DayState;
   schedules: Array<ItemType>;
+  income: Array<IncomeType>;
   onClickSchedule: (
     schedule: ItemType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
+  onClickIncome: (
+    income: IncomeType,
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => void;
 };
 
-const CalendarElement: React.FC<Props> = (props) => {
-  const { day, month, schedules, onClickSchedule } = props;
+const CalendarElement: React.FC<Props> = React.memo((props) => {
+  const {
+    day,
+    month,
+    schedules,
+    onClickSchedule,
+    income,
+    onClickIncome,
+  } = props;
 
   const currentMonth: dayjs.Dayjs = getMonth(month);
 
@@ -84,9 +97,12 @@ const CalendarElement: React.FC<Props> = (props) => {
             onClickSchedule={onClickSchedule}
           />
         ))}
+        {income.map((e) => (
+          <Income key={e.incomeId} income={e} onClickIncome={onClickIncome} />
+        ))}
       </div>
     </div>
   );
-};
+});
 
 export default CalendarElement;

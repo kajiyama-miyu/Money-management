@@ -30,23 +30,16 @@ const Navigation: React.FC = () => {
     dispatch(calendarSlice.actions.carenderSetMonth(preMonth));
   };
 
+  const calendar = useSelector(selectCalendarData);
+
   return (
     <StyledToolbar>
-      <IconButton>
-        <DehazeIcon />
-      </IconButton>
-      <img
-        src="/images/money.png"
-        alt="カレンダーアイコン"
-        width="40"
-        height="40"
-      />
-      <StyledTypography color="textPrimary" variant="h5">
-        Money Management
-      </StyledTypography>
       <IconButton size="small" onClick={setPreviousMonthData}>
         <ArrowBackIos />
       </IconButton>
+      <StyledTypography color="textPrimary" variant="h6">
+        {calendar.year}年 {calendar.month}月
+      </StyledTypography>
       <IconButton size="small" onClick={setNextMonthData}>
         <ArrowForwardIos />
       </IconButton>
