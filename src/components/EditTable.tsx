@@ -24,7 +24,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import { ItemType } from "../redux/addSchedule/slice";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUpdateData, selectMoneyData } from "../store/moneyDataSlice";
-
+import { EditItemType } from "../components/AddScheduleDialog/edit";
 const spacer = { margin: "4px, 0" };
 
 const styles: { [key: string]: React.CSSProperties } = {
@@ -38,10 +38,10 @@ const Title = withStyles({
 })(Input);
 
 type Props = {
-  newDate: dayjs.Dayjs;
+  newDate: dayjs.Dayjs | null;
   isOpen: boolean;
   doClose: () => void;
-  moneyInfo: ItemType;
+  moneyInfo: EditItemType;
 };
 
 const EditTable: React.FC<Props> = (props) => {
@@ -50,7 +50,7 @@ const EditTable: React.FC<Props> = (props) => {
   const [amount, setAmount] = useState(moneyInfo.amount);
   const [jenre, setJenre] = useState(moneyInfo.jenre);
   const [details, setDetails] = useState(moneyInfo.details);
-  const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs(moneyInfo.date));
+  const [date, setDate] = useState<dayjs.Dayjs | null>(moneyInfo.date);
   const [userNum, seUserNum] = useState<string>("abcde");
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const EditTable: React.FC<Props> = (props) => {
     setAmount(moneyInfo.amount);
     setJenre(moneyInfo.jenre);
     setDetails(moneyInfo.details);
-    setDate(dayjs(moneyInfo.date));
+    setDate(moneyInfo.date);
   }, [
     moneyInfo.amount,
     moneyInfo.jenre,
@@ -88,7 +88,7 @@ const EditTable: React.FC<Props> = (props) => {
     setDate(newDay);
   };
 
-  const [arg, setArg] = useState<ItemType>({
+  const [arg, setArg] = useState<EditItemType>({
     moneyId: 0,
     userNum: "",
     amount: 0,

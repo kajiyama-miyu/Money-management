@@ -7,16 +7,17 @@ import MaterialTable from "material-table";
 import EditTable from "../EditTable";
 import dayjs from "dayjs";
 import { ItemType } from "../../redux/addSchedule/slice";
+import { EditItemType } from "../../components/AddScheduleDialog/edit";
 
 const SwitchButton: React.FC = () => {
   const moneyData = useSelector(selectMoneyData);
   const incomeData = useSelector(selectIncomeData);
   const [money, setMoney] = useState<Array<object>>([]);
   const [income, setIncome] = useState<Array<object>>([]);
-  const [changeDate, setChangeDate] = useState(dayjs());
+  const [changeDate, setChangeDate] = useState<dayjs.Dayjs | null>(dayjs());
   const [dialogOpen, setDialogOpen] = useState(false);
   const [userNum, setUserNum] = useState("abc");
-  const [moneyInfo, setMoneyInfo] = useState<ItemType>({
+  const [moneyInfo, setMoneyInfo] = useState<EditItemType>({
     userNum: "abcde",
     moneyId: 0,
     amount: 0,
@@ -63,7 +64,7 @@ const SwitchButton: React.FC = () => {
   }, [dataList, incomeList]);
 
   //ダイアログを表示させるメソッド
-  const onClickOpen = (rowData: ItemType) => {
+  const onClickOpen = (rowData: EditItemType) => {
     setDialogOpen(true);
     setMoneyInfo(rowData);
   };
@@ -94,7 +95,7 @@ const SwitchButton: React.FC = () => {
                 icon: "edit",
                 tooltip: "Edit Item",
                 onClick: (_, rowData) => {
-                  onClickOpen(rowData as ItemType);
+                  onClickOpen(rowData as EditItemType);
                 },
               },
             ]}
