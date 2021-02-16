@@ -15,6 +15,7 @@ import {
   CategoryOutlined,
   NoteOutlined,
   AccessTime,
+  Delete,
   Close,
 } from "@material-ui/icons";
 import { withStyles } from "@material-ui/styles";
@@ -22,7 +23,11 @@ import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import dayjs from "dayjs";
 import DateFnsUtils from "@date-io/date-fns";
 import { useDispatch } from "react-redux";
-import { fetchUpdateData, fetchUpdateIncome } from "../store/moneyDataSlice";
+import {
+  deleteIncome,
+  fetchUpdateData,
+  fetchUpdateIncome,
+} from "../store/moneyDataSlice";
 import { EditItemType } from "../components/AddScheduleDialog/edit";
 import { EditIncomeType } from "./AddScheduleDialog/edit";
 const spacer = { margin: "4px, 0" };
@@ -127,9 +132,19 @@ const EditIncome: React.FC<Props> = (props) => {
     doClose();
   };
 
+  //削除の処理
+  const handleDeteleSchedule = () => {
+    console.log(moneyId);
+    dispatch(deleteIncome(arg));
+    doClose();
+  };
+
   return (
     <Dialog open={isOpen} onClose={doClose} maxWidth="xs" fullWidth>
       <DialogActions>
+        <IconButton onClick={handleDeteleSchedule} size="small">
+          <Delete />
+        </IconButton>
         <div style={styles.closeButton}>
           <IconButton onClick={doClose} size="small">
             <Close />

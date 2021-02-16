@@ -45,13 +45,31 @@ const PiePlot: React.FC = () => {
   //PieChart
   const createPiePlotData = (amount: Array<number>) => {
     let data = {
-      labels: ["Windows", "Mac", "Linux"],
+      labels: ["食費", "日用品", "衣服", "交通費", "その他"],
       datasets: [
         {
           data: amount,
-          backgroundColor: ["#4169e1", "#ff1493", "#FFCE56"],
-          hoverBackgroundColor: ["#36A2EB", "#FF6384", "#FFCE56"],
-          borderColor: ["transparent", "transparent", "transparent"],
+          backgroundColor: [
+            "#FFB6C1",
+            "#4169E1",
+            "#FFCE56",
+            "#008B8B",
+            "#A9A9A9",
+          ],
+          hoverBackgroundColor: [
+            "#FFB6C1",
+            "#4169E1",
+            "#FFCE56",
+            "#008B8B",
+            "#A9A9A9",
+          ],
+          borderColor: [
+            "transparent",
+            "transparent",
+            "transparent",
+            "transparent",
+            "transparent",
+          ],
         },
       ],
     };
