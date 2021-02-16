@@ -1,23 +1,24 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { RootState } from "../store/index";
+import { ItemType } from "../redux/addSchedule/slice";
 
-type MoneyInfo = { amount: number; jenre: string; date: Date; details: string };
 // APIから取得するdataをtypeとして定義
-type MONEY_DATA = Array<MoneyInfo>;
-
+type MONEY_DATA = Array<ItemType>;
 // state
 export type moneyState = {
   moneyData: MONEY_DATA;
+  incomeData: MONEY_DATA;
 };
 
 // stateの初期値
 const initialState: moneyState = {
   moneyData: [],
+  incomeData: [],
 };
 
 interface moneyResponse {
-  moneyInfoList: Array<MoneyInfo>;
+  moneyInfoList: Array<ItemType>;
 }
 
 // createAsyncThunk: 非同期に対応したAction Creator
@@ -37,6 +38,45 @@ export const fetchMoneyData = createAsyncThunk(
       }
     );
     return { data: data.moneyInfoList };
+  }
+);
+
+//収入情報を取ってくる非同期
+export const fetchIncomeData = createAsyncThunk(
+  "covid/getIncomeData",
+  async (arg: { userNum: string; month: number; year: number }) => {
+    const { userNum, month, year } = arg;
+    // GenericsでAPIから取得するデータ型を保証
+    const { data } = await axios.get<moneyResponse>(
+      "http://localhost:8080/getIncomeData",
+      {
+        params: {
+          userNum,
+          month,
+          year,
+        },
+      }
+    );
+    return { data: data.moneyInfoList };
+  }
+);
+
+export const fetchUpdateData = createAsyncThunk(
+  "covid/updateMoney",
+  async (arg: ItemType) => {
+    const { moneyId, userNum, amount, jenre, details, date } = arg;
+    const { data } = await axios.post<ItemType>(
+      "http://localhost:8080/updateMoney",
+      {
+        moneyId,
+        userNum,
+        amount,
+        jenre,
+        details,
+        date,
+      }
+    );
+    return { data: data };
   }
 );
 
@@ -64,11 +104,24 @@ const moneySlice = createSlice({
         moneyData: action.payload.data, // 上書き
       };
     });
+    builder.addCase(fetchIncomeData.fulfilled, (state, action) => {
+      return {
+        ...state,
+        incomeData: action.payload.data,
+      };
+    });
+    builder.addCase(fetchUpdateData.fulfilled, (state, action) => {
+      const index = state.moneyData.findIndex(
+        (i) => i.moneyId === action.payload.data.moneyId
+      );
+      state.moneyData[index] = action.payload.data;
+    });
   },
 });
 
 // React Componentからstateを参照するための関数を定義
 // React Componentでこの関数をimport後、useSelectorを用いて各値を参照することができる
 export const selectMoneyData = (state: RootState) => state.money.moneyData;
+export const selectIncomeData = (state: RootState) => state.money.incomeData;
 
 export default moneySlice.reducer;
