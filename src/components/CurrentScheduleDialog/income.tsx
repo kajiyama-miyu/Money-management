@@ -12,7 +12,8 @@ import {
   NoteOutlined,
   AccessTime,
   Close,
-  DeleteOutlineOutlined,
+  Delete,
+  Edit,
 } from "@material-ui/icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -21,7 +22,12 @@ import {
 } from "../../redux/currentSchedule/slice";
 import { deleteCurrentIncomeData } from "../../redux/addSchedule/slice";
 
-type Props = { doDialogClose: () => void };
+type Props = {
+  doDialogClose: () => void;
+  onClickOpenIncomeEdit: (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
+};
 
 const styles: { [key: string]: React.CSSProperties } = {
   closeButton: {
@@ -38,7 +44,7 @@ const styles: { [key: string]: React.CSSProperties } = {
 };
 
 const CurrentIncomeDialog: React.FC<Props> = React.memo((props) => {
-  const { doDialogClose } = props;
+  const { doDialogClose, onClickOpenIncomeEdit } = props;
   const currentData = useSelector(selectCurrentIncome);
   const openStatus = useSelector(selectCurrentIncomeDialogStatus);
 
@@ -55,8 +61,11 @@ const CurrentIncomeDialog: React.FC<Props> = React.memo((props) => {
   return (
     <Dialog open={openStatus} onClose={doDialogClose} maxWidth="xs" fullWidth>
       <DialogActions>
+        <IconButton onClick={(e) => onClickOpenIncomeEdit(e)} size="small">
+          <Edit />
+        </IconButton>
         <IconButton onClick={handleDeteleSchedule} size="small">
-          <DeleteOutlineOutlined />
+          <Delete />
         </IconButton>
         <div style={styles.closeButton}>
           <IconButton onClick={doDialogClose} size="small">
