@@ -64,8 +64,6 @@ type Props = {
   doClose: () => void;
   isEditOpen: boolean;
   currentData: ItemType | null;
-  currentIncome: IncomeType | null;
-  ArrayIncome: Array<IncomeType>;
   ArrayData: Array<ItemType>;
 };
 
@@ -89,25 +87,10 @@ export type EditIncomeType = {
 
 //金額入力フォーム
 const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
-  const {
-    isEditOpen,
-    doClose,
-    currentData,
-    currentIncome,
-    ArrayData,
-    ArrayIncome,
-  } = props;
-
-  // const data = useSelector(selectCurrentSchedule);
-  // const incomeData = useSelector(selectCurrentIncome);
-  // const ArrayData = useSelector(selectSchedules);
-  // const ArrayIncome = useSelector(selectIncome);
+  const { isEditOpen, doClose, currentData, ArrayData } = props;
 
   //編集したいデータのidと一致する物を抽出（idは唯一の値なので抽出できる値は一つだけ）
   const newData = ArrayData.filter((s) => s.moneyId === currentData?.moneyId);
-  const newIncomeData = ArrayIncome.filter(
-    (s) => s.incomeId === currentIncome?.incomeId
-  );
 
   const [amount, setAmount] = useState(0);
   const [expenseJenre, setExpenseJenre] = useState("食費");
@@ -152,7 +135,7 @@ const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
         setSelect(
           <Grid item xs={10}>
             <Select
-              value={expenseJenre}
+              value={n.jenre}
               onChange={(e) => {
                 handleExpenseJenreValue(e.target.value as string);
               }}
@@ -168,33 +151,8 @@ const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
           </Grid>
         );
       }
-    } else if (newIncomeData !== null) {
-      console.log("setIncomeData");
-      for (let n of newIncomeData) {
-        setIncomeId(n.incomeId);
-        setAmount(n.income);
-        setIncomeJenre(n.jenre);
-        setDetails(n.details);
-        setDate(dayjs(n.date));
-        setDialogStatus(false);
-        setSelect(
-          <Grid item xs={10}>
-            <Select
-              value={incomeJenre}
-              onChange={(e) => {
-                handleIncomeJenreValue(e.target.value as string);
-              }}
-              fullWidth
-              autoFocus
-            >
-              <MenuItem value="給料">給料</MenuItem>
-              <MenuItem value="その他">その他</MenuItem>
-            </Select>
-          </Grid>
-        );
-      }
     }
-  }, [currentData, currentIncome, ArrayData, ArrayIncome]);
+  }, [currentData, ArrayData]);
 
   //金額をセット
   const handleAmountValue = (value: string) => {
@@ -344,29 +302,6 @@ const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
           </Grid>
         );
       }
-    } else if (newIncomeData !== null) {
-      for (let n of newIncomeData) {
-        setAmount(n.income);
-        setIncomeJenre(n.jenre);
-        setDetails(n.details);
-        setDate(dayjs(n.date));
-        setDialogStatus(false);
-        setSelect(
-          <Grid item xs={10}>
-            <Select
-              value={incomeJenre}
-              onChange={(e) => {
-                handleIncomeJenreValue(e.target.value as string);
-              }}
-              fullWidth
-              autoFocus
-            >
-              <MenuItem value="給料">給料</MenuItem>
-              <MenuItem value="その他">その他</MenuItem>
-            </Select>
-          </Grid>
-        );
-      }
     }
   };
 
@@ -400,31 +335,9 @@ const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
           </Grid>
         );
       }
-    } else if (newIncomeData !== null) {
-      for (let n of newIncomeData) {
-        setAmount(n.income);
-        setIncomeJenre(n.jenre);
-        setDetails(n.details);
-        setDate(dayjs(n.date));
-        setDialogStatus(false);
-        setSelect(
-          <Grid item xs={10}>
-            <Select
-              value={incomeJenre}
-              onChange={(e) => {
-                handleIncomeJenreValue(e.target.value as string);
-              }}
-              fullWidth
-              autoFocus
-            >
-              <MenuItem value="給料">給料</MenuItem>
-              <MenuItem value="その他">その他</MenuItem>
-            </Select>
-          </Grid>
-        );
-      }
     }
-  }, [doClose, expenseJenre, incomeJenre, newData, newIncomeData]);
+  }, [doClose, expenseJenre, incomeJenre, newData]);
+
   return (
     <Dialog open={isEditOpen} onClose={handleClose} maxWidth="xs" fullWidth>
       <DialogActions>
