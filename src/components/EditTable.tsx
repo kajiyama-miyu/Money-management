@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,9 +21,8 @@ import { withStyles } from "@material-ui/styles";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import dayjs from "dayjs";
 import DateFnsUtils from "@date-io/date-fns";
-import { ItemType } from "../redux/addSchedule/slice";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchUpdateData, selectMoneyData } from "../store/moneyDataSlice";
+import { useDispatch } from "react-redux";
+import { fetchUpdateData, fetchUpdateIncome } from "../store/moneyDataSlice";
 import { EditItemType } from "../components/AddScheduleDialog/edit";
 const spacer = { margin: "4px, 0" };
 
