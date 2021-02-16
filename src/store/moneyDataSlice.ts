@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { RootState } from "../store/index";
 import { ItemType } from "../redux/addSchedule/slice";
+import { EditItemType } from "../components/AddScheduleDialog/edit";
 
 // APIから取得するdataをtypeとして定義
 type MONEY_DATA = Array<ItemType>;
@@ -63,7 +64,7 @@ export const fetchIncomeData = createAsyncThunk(
 
 export const fetchUpdateData = createAsyncThunk(
   "covid/updateMoney",
-  async (arg: ItemType) => {
+  async (arg: EditItemType) => {
     const { moneyId, userNum, amount, jenre, details, date } = arg;
     const { data } = await axios.post<ItemType>(
       "http://localhost:8080/updateMoney",
