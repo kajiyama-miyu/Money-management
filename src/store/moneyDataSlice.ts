@@ -6,6 +6,7 @@ import { EditItemType } from "../components/AddScheduleDialog/edit";
 
 // APIから取得するdataをtypeとして定義
 type MONEY_DATA = Array<ItemType>;
+
 // state
 export type moneyState = {
   moneyData: MONEY_DATA;
@@ -102,6 +103,42 @@ export const fetchUpdateIncome = createAsyncThunk(
   }
 );
 
+//支出削除
+export const deleteExpenses = createAsyncThunk(
+  "covid/deleteExpense",
+  async (arg: { moneyId: number }) => {
+    const { moneyId } = arg;
+    console.log("delete", moneyId);
+    const { data } = await axios.get<number>(
+      "http://localhost:8080/deleteExpenses",
+      {
+        params: {
+          moneyId,
+        },
+      }
+    );
+    return { data: data };
+  }
+);
+
+//収入削除
+export const deleteIncome = createAsyncThunk(
+  "covid/deleteIncome",
+  async (arg: { moneyId: number }) => {
+    const { moneyId } = arg;
+    console.log("delete", moneyId);
+    const { data } = await axios.get<number>(
+      "http://localhost:8080/deleteIncomeData",
+      {
+        params: {
+          moneyId,
+        },
+      }
+    );
+    return { data: data };
+  }
+);
+
 const moneySlice = createSlice({
   // Sliceの名称
   name: "money",
@@ -143,6 +180,26 @@ const moneySlice = createSlice({
         (i) => i.moneyId === action.payload.data.moneyId
       );
       state.incomeData[index] = action.payload.data;
+    });
+    //支出の削除(削除した瞬間に画面からも削除するための処理)
+    builder.addCase(deleteExpenses.fulfilled, (state, actions) => {
+      const newDatas = state.moneyData.filter(
+        (s) => s.moneyId !== actions.payload.data
+      );
+      return {
+        ...state,
+        moneyData: newDatas,
+      };
+    });
+    //収入の削除(削除した瞬間に画面からも削除するための処理)
+    builder.addCase(deleteIncome.fulfilled, (state, actions) => {
+      const newDatas = state.incomeData.filter(
+        (s) => s.moneyId !== actions.payload.data
+      );
+      return {
+        ...state,
+        incomeData: newDatas,
+      };
     });
   },
 });
