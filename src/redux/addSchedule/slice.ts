@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { RootState } from "../rootReducer";
+import dayjs from "dayjs";
 import {
   AddIncomeType,
   AddItemType,
@@ -14,7 +15,7 @@ export type ItemType = {
   amount: number;
   jenre: string;
   details: string;
-  date: Date;
+  date: dayjs.Dayjs;
 };
 
 export type IncomeType = {
@@ -43,6 +44,7 @@ export const fetchMoneyData = createAsyncThunk(
   "schedules/createSchedule",
   async (arg: AddItemType) => {
     const { userNum, amount, jenre, details, date } = arg;
+    console.log(amount);
     const { data } = await axios.post<ItemType>(
       "http://localhost:8080/postExpense",
       {
@@ -197,6 +199,7 @@ export const scheduleSlice = createSlice({
         isLoading: false,
       };
     });
+
     builder.addCase(fetchCurrentIncome.fulfilled, (state, actions) => {
       return {
         ...state,

@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
 import { selectDataDaily, fetchDataDaily } from "../store/piePlotSlice";
-import MoneyData from "../components/MoneyData";
 import Month from "../components/Month";
 import dayjs from "dayjs";
-import { fetchMoneyData } from "../store/moneyDataSlice";
 import TotalAmount from "../components/TotalAmount";
 import { fetchInitialState, fetchTotalIncome } from "../store/totalAmountSlice";
 
@@ -40,7 +38,6 @@ const PiePlot: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchDataDaily(arg));
-    dispatch(fetchMoneyData(arg));
     dispatch(fetchInitialState(arg));
     dispatch(fetchTotalIncome(arg));
   }, [dispatch, arg]);
@@ -88,7 +85,6 @@ const PiePlot: React.FC = () => {
         <Pie data={piePlotData} options={options} width={300} height={300} />
         <TotalAmount />
       </div>
-      <MoneyData />
     </div>
   );
 };
