@@ -19,7 +19,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: "16vh",
   },
   date: {
-    padding: "5px 0",
+    padding: "5px 0 30px 0px",
     height: "24px",
   },
   today: {
@@ -52,7 +52,7 @@ type Props = {
   ) => void;
 };
 
-const CalendarElement: React.FC<Props> = (props) => {
+const CalendarElement: React.FC<Props> = React.memo((props) => {
   const {
     day,
     month,
@@ -103,6 +103,6 @@ const CalendarElement: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+});
 
 export default CalendarElement;
