@@ -10,6 +10,7 @@ import {
   Select,
   MenuItem,
   IconButton,
+  Typography,
 } from "@material-ui/core";
 import {
   CategoryOutlined,
@@ -24,15 +25,9 @@ import DateFnsUtils from "@date-io/date-fns";
 import {
   updateExpense,
   IncomeType,
-  postIncome,
-  ItemType,
+  updateIncome,
 } from "../../redux/addSchedule/slice";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  selectCurrentSchedule,
-  selectCurrentIncome,
-} from "../../redux/currentSchedule/slice";
-import { selectSchedules, selectIncome } from "../../redux/addSchedule/slice";
+import { useDispatch } from "react-redux";
 
 const spacer = { margin: "4px, 0" };
 
@@ -67,15 +62,6 @@ type Props = {
   ArrayIncomeData: Array<IncomeType>;
 };
 
-export type EditItemType = {
-  moneyId: number;
-  userNum: string;
-  amount: number;
-  jenre: string;
-  details: string;
-  date: dayjs.Dayjs | null;
-};
-
 export type EditIncomeType = {
   incomeId: number;
   userNum: string;
@@ -94,63 +80,23 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
     (s) => s.incomeId === currentIncomeData?.incomeId
   );
 
-  console.log("newData", newData);
-
   const [amount, setAmount] = useState(0);
-  const [expenseJenre, setExpenseJenre] = useState("食費");
   const [incomeJenre, setIncomeJenre] = useState("給料");
   const [details, setDetails] = useState("");
   const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs());
   const [userNum, seUserNum] = useState<string>("abc");
   const [dialogStatus, setDialogStatus] = useState(true);
-  const [moneyId, setMoneyId] = useState(0);
   const [incomeId, setIncomeId] = useState(0);
-
-  const [select, setSelect] = useState(
-    <Grid item xs={10}>
-      <Select
-        value={expenseJenre}
-        onChange={(e) => {
-          handleExpenseJenreValue(e.target.value as string);
-        }}
-        fullWidth
-        autoFocus
-      >
-        <MenuItem value="食費">食費</MenuItem>
-        <MenuItem value="日用品">日用品</MenuItem>
-        <MenuItem value="衣服">衣服</MenuItem>
-        <MenuItem value="交通費">交通費</MenuItem>
-        <MenuItem value="その他">その他</MenuItem>
-      </Select>
-    </Grid>
-  );
 
   //編集したいデータをvalueにつめる(条件分岐で支出か収入かを分ける)
   useEffect(() => {
-    console.log("setNewData");
     if (newData !== null) {
       for (let n of newData) {
-        setMoneyId(n.incomeId);
+        setIncomeId(n.incomeId);
         setAmount(n.income);
         setIncomeJenre(n.jenre);
         setDetails(n.details);
         setDate(dayjs(n.date));
-        setDialogStatus(false);
-        setSelect(
-          <Grid item xs={10}>
-            <Select
-              value={n.jenre}
-              onChange={(e) => {
-                handleIncomeJenreValue(e.target.value as string);
-              }}
-              fullWidth
-              autoFocus
-            >
-              <MenuItem value="給料">給料</MenuItem>
-              <MenuItem value="その他">その他</MenuItem>
-            </Select>
-          </Grid>
-        );
       }
     }
   }, [currentIncomeData, ArrayIncomeData]);
@@ -160,9 +106,6 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
     setAmount(Number(value));
   };
   //カテゴリーをセット
-  const handleExpenseJenreValue = (value: string) => {
-    setExpenseJenre(value);
-  };
   const handleIncomeJenreValue = (value: string) => {
     setIncomeJenre(value);
   };
@@ -179,59 +122,6 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
     setDate(newDay);
   };
 
-  const handleChangeExpense = useCallback(() => {
-    console.log("支出", expenseJenre);
-    setDialogStatus(true);
-    setSelect(
-      <Grid item xs={10}>
-        <Select
-          value={expenseJenre}
-          onChange={(e) => {
-            handleExpenseJenreValue(e.target.value as string);
-          }}
-          fullWidth
-          autoFocus
-        >
-          <MenuItem value="食費">食費</MenuItem>
-          <MenuItem value="日用品">日用品</MenuItem>
-          <MenuItem value="衣服">衣服</MenuItem>
-          <MenuItem value="交通費">交通費</MenuItem>
-          <MenuItem value="その他">その他</MenuItem>
-        </Select>
-      </Grid>
-    );
-  }, [expenseJenre]);
-
-  const handleChangeIncome = useCallback(() => {
-    console.log("収入", incomeJenre);
-    setDialogStatus(false);
-    setSelect(
-      <Grid item xs={10}>
-        <Select
-          value={incomeJenre}
-          onChange={(e) => {
-            handleIncomeJenreValue(e.target.value as string);
-          }}
-          fullWidth
-          autoFocus
-        >
-          <MenuItem value="給料">給料</MenuItem>
-          <MenuItem value="その他">その他</MenuItem>
-        </Select>
-      </Grid>
-    );
-  }, [incomeJenre]);
-
-  //valueをまとめて送るためのオブジェクト
-  const [arg, setArg] = useState<EditItemType>({
-    moneyId: 0,
-    userNum: "",
-    amount: 0,
-    jenre: "",
-    details: "",
-    date: dayjs(),
-  });
-
   //valueをまとめて送るためのオブジェクト
   const [argIncome, setArgIncome] = useState<EditIncomeType>({
     incomeId: 0,
@@ -245,62 +135,28 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (date != null && dialogStatus === true) {
-      console.log("expense arg");
-
-      setArg({
-        moneyId: moneyId,
-        userNum: userNum,
-        amount: amount,
-        jenre: expenseJenre,
-        details: details,
-        date: date,
-      });
-    } else {
-      setArgIncome({
-        incomeId: incomeId,
-        userNum: userNum,
-        income: amount,
-        jenre: incomeJenre,
-        details: details,
-        date: date,
-      });
-    }
-  }, [userNum, amount, expenseJenre, details, date, incomeJenre, dialogStatus]);
+    setArgIncome({
+      incomeId: incomeId,
+      userNum: userNum,
+      income: amount,
+      jenre: incomeJenre,
+      details: details,
+      date: date,
+    });
+  }, [userNum, amount, details, date, incomeJenre, dialogStatus]);
 
   //保存したら元のデータをつめる
   const handleSaveData = () => {
-    console.log("status", dialogStatus);
-    if (dialogStatus) {
-      dispatch(updateExpense(arg));
-    } else {
-      // dispatch(postIncome(argIncome));
-    }
+    dispatch(updateIncome(argIncome));
 
     doClose();
 
     if (newData !== null) {
       for (let n of newData) {
         setAmount(n.income);
-        setExpenseJenre(n.jenre);
+        setIncomeJenre(n.jenre);
         setDetails(n.details);
         setDate(dayjs(n.date));
-        setDialogStatus(true);
-        setSelect(
-          <Grid item xs={10}>
-            <Select
-              value={n.jenre}
-              onChange={(e) => {
-                handleIncomeJenreValue(e.target.value as string);
-              }}
-              fullWidth
-              autoFocus
-            >
-              <MenuItem value="給料">給料</MenuItem>
-              <MenuItem value="その他">その他</MenuItem>
-            </Select>
-          </Grid>
-        );
       }
     }
   };
@@ -315,28 +171,9 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
         setIncomeJenre(n.jenre);
         setDetails(n.details);
         setDate(dayjs(n.date));
-        setDialogStatus(false);
-        setSelect(
-          <Grid item xs={10}>
-            <Select
-              value={n.jenre}
-              onChange={(e) => {
-                handleExpenseJenreValue(e.target.value as string);
-              }}
-              fullWidth
-              autoFocus
-            >
-              <MenuItem value="食費">食費</MenuItem>
-              <MenuItem value="日用品">日用品</MenuItem>
-              <MenuItem value="衣服">衣服</MenuItem>
-              <MenuItem value="交通費">交通費</MenuItem>
-              <MenuItem value="その他">その他</MenuItem>
-            </Select>
-          </Grid>
-        );
       }
     }
-  }, [doClose, expenseJenre, incomeJenre, newData]);
+  }, [doClose, incomeJenre, newData]);
 
   return (
     <Dialog open={isEditOpen} onClose={handleClose} maxWidth="xs" fullWidth>
@@ -347,24 +184,9 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
           </IconButton>
         </div>
       </DialogActions>
-      <Grid container justify="center" alignItems="center">
-        <Grid item>
-          <Button
-            variant="outlined"
-            style={dialogStatus ? styles.expenseButton : styles.button}
-            onClick={() => handleChangeExpense()}
-          >
-            支出
-          </Button>
-          <Button
-            variant="outlined"
-            style={dialogStatus ? styles.button : styles.incomeButton}
-            onClick={() => handleChangeIncome()}
-          >
-            収入
-          </Button>
-        </Grid>
-      </Grid>
+      <Typography align="center" variant="h5">
+        編集
+      </Typography>
       <DialogContent>
         <Title
           autoFocus
@@ -379,7 +201,19 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
           <Grid item>
             <CategoryOutlined />
           </Grid>
-          {select}
+          <Grid item xs={10}>
+            <Select
+              value={incomeJenre}
+              onChange={(e) => {
+                handleIncomeJenreValue(e.target.value as string);
+              }}
+              fullWidth
+              autoFocus
+            >
+              <MenuItem value="給料">給料</MenuItem>
+              <MenuItem value="その他">その他</MenuItem>
+            </Select>
+          </Grid>
         </Grid>
         <Grid container spacing={1} alignItems="center" justify="space-between">
           <Grid item>
