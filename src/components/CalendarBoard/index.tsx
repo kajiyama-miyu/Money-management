@@ -35,6 +35,7 @@ import CurrentIncomeDialog from "../CurrentScheduleDialog/income";
 import { makeStyles } from "@material-ui/core/styles";
 import { ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
 import UpDateMoneyDialog from "../AddScheduleDialog/edit";
+import UpDateIncomeDialog from "../AddScheduleDialog/incomeEdit";
 import {
   selectCurrentSchedule,
   selectCurrentIncome,
@@ -92,6 +93,7 @@ const CalendarBoad: React.FC = React.memo(function CalendarBoad() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [userNum, setUserNum] = useState("abc");
   const [edidDialog, setEditDialogOpen] = useState(false);
+  const [incomeEditDialog, setIncomeEditDialog] = useState(false);
 
   const handleOpen = useCallback((c: dayjs.Dayjs): void => {
     setDialogOpen(true);
@@ -110,6 +112,17 @@ const CalendarBoad: React.FC = React.memo(function CalendarBoad() {
       dispatch(currentScheduleSlice.actions.setCloseCurrentDialog());
     },
     [dispatch]
+  );
+
+  //収入の編集ダイアログオープン
+  const handleIncomeEditOpen = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.stopPropagation();
+
+      setIncomeEditDialog(true);
+      dispatch(currentScheduleSlice.actions.setCloseCurrentIncomeDialog());
+    },
+    []
   );
 
   //支出のダイアログオープン
@@ -151,6 +164,11 @@ const CalendarBoad: React.FC = React.memo(function CalendarBoad() {
   //編集ダイアログクローズ
   const handleEditClose = useCallback(() => {
     setEditDialogOpen(false);
+  }, []);
+
+  //収入編集ダイアログクローズ
+  const handleIncomeEditClose = useCallback(() => {
+    setIncomeEditDialog(false);
   }, []);
 
   //収入と支出のデータ取得
@@ -226,14 +244,21 @@ const CalendarBoad: React.FC = React.memo(function CalendarBoad() {
             doClose={handleCloseCurrentDialog}
             onClickOpenEdit={handleEditOpen}
           />
-          <CurrentIncomeDialog doDialogClose={handleCloseCurrentIncomeDialog} />
+          <CurrentIncomeDialog
+            doDialogClose={handleCloseCurrentIncomeDialog}
+            onClickOpenIncomeEdit={handleIncomeEditOpen}
+          />
           <UpDateMoneyDialog
             isEditOpen={edidDialog}
             doClose={handleEditClose}
             currentData={currentData}
-            currentIncome={currentIncome}
             ArrayData={scheduleData}
-            ArrayIncome={incomeData}
+          />
+          <UpDateIncomeDialog
+            isEditOpen={incomeEditDialog}
+            doClose={handleIncomeEditClose}
+            currentIncomeData={currentIncome}
+            ArrayIncomeData={incomeData}
           />
         </GridList>
       </Paper>
