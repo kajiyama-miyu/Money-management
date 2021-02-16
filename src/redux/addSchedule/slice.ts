@@ -6,6 +6,7 @@ import {
   AddItemType,
 } from "../../components/AddScheduleDialog/index";
 import { EditItemType } from "../../components/AddScheduleDialog/edit";
+import { EditIncomeType } from "../../components/AddScheduleDialog/incomeEdit";
 
 export type ItemType = {
   moneyId: number;
@@ -132,6 +133,26 @@ export const updateExpense = createAsyncThunk(
   }
 );
 
+//収入の更新
+export const updateIncome = createAsyncThunk(
+  "schedule/updateIncome",
+  async (arg: EditIncomeType) => {
+    const { incomeId, userNum, income, jenre, details, date } = arg;
+    const { data } = await axios.put<IncomeType>(
+      "http://localhost:8080/putIncome",
+      {
+        incomeId: incomeId,
+        userNum: userNum,
+        income: income,
+        jenre: jenre,
+        details: details,
+        date: date,
+      }
+    );
+    return { data: data };
+  }
+);
+
 //支出削除
 export const deleteCurrentData = createAsyncThunk(
   "schedules/delete",
@@ -198,6 +219,7 @@ export const scheduleSlice = createSlice({
       };
     });
 
+    //収入の取得保存
     builder.addCase(fetchCurrentIncome.fulfilled, (state, actions) => {
       return {
         ...state,
@@ -206,11 +228,20 @@ export const scheduleSlice = createSlice({
       };
     });
 
+    //支出の更新
     builder.addCase(updateExpense.fulfilled, (state, actions) => {
       const index = state.items.findIndex(
         (item) => item.moneyId === actions.payload.data.moneyId
       );
       state.items[index] = actions.payload.data;
+    });
+
+    //収入の更新
+    builder.addCase(updateIncome.fulfilled, (state, actions) => {
+      const index = state.incomeItems.findIndex(
+        (item) => item.incomeId === actions.payload.data.incomeId
+      );
+      state.incomeItems[index] = actions.payload.data;
     });
 
     //支出の削除(削除した瞬間に画面からも削除するための処理)
