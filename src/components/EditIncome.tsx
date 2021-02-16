@@ -24,6 +24,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import { useDispatch } from "react-redux";
 import { fetchUpdateData, fetchUpdateIncome } from "../store/moneyDataSlice";
 import { EditItemType } from "../components/AddScheduleDialog/edit";
+import { EditIncomeType } from "./AddScheduleDialog/edit";
 const spacer = { margin: "4px, 0" };
 
 const styles: { [key: string]: React.CSSProperties } = {
@@ -43,7 +44,7 @@ type Props = {
   moneyInfo: EditItemType;
 };
 
-const EditTable: React.FC<Props> = (props) => {
+const EditIncome: React.FC<Props> = (props) => {
   const { isOpen, doClose, moneyInfo } = props;
   const [moneyId, setMoneyId] = useState(moneyInfo.moneyId);
   const [amount, setAmount] = useState(moneyInfo.amount);
@@ -121,7 +122,7 @@ const EditTable: React.FC<Props> = (props) => {
       date: date!,
     });
     console.log("arg", arg);
-    dispatch(fetchUpdateData(arg));
+    dispatch(fetchUpdateIncome(arg));
 
     doClose();
   };
@@ -215,4 +216,4 @@ const EditTable: React.FC<Props> = (props) => {
   );
 };
 
-export default EditTable;
+export default EditIncome;

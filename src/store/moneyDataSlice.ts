@@ -62,12 +62,33 @@ export const fetchIncomeData = createAsyncThunk(
   }
 );
 
+//支出を編集する
 export const fetchUpdateData = createAsyncThunk(
   "covid/updateMoney",
   async (arg: EditItemType) => {
     const { moneyId, userNum, amount, jenre, details, date } = arg;
     const { data } = await axios.post<ItemType>(
       "http://localhost:8080/updateMoney",
+      {
+        moneyId,
+        userNum,
+        amount,
+        jenre,
+        details,
+        date,
+      }
+    );
+    return { data: data };
+  }
+);
+
+//収入を編集する
+export const fetchUpdateIncome = createAsyncThunk(
+  "covid/updateIncome",
+  async (arg: EditItemType) => {
+    const { moneyId, userNum, amount, jenre, details, date } = arg;
+    const { data } = await axios.post<ItemType>(
+      "http://localhost:8080/updateIncome",
       {
         moneyId,
         userNum,
@@ -116,6 +137,12 @@ const moneySlice = createSlice({
         (i) => i.moneyId === action.payload.data.moneyId
       );
       state.moneyData[index] = action.payload.data;
+    });
+    builder.addCase(fetchUpdateIncome.fulfilled, (state, action) => {
+      const index = state.incomeData.findIndex(
+        (i) => i.moneyId === action.payload.data.moneyId
+      );
+      state.incomeData[index] = action.payload.data;
     });
   },
 });

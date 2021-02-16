@@ -35,7 +35,7 @@ const App: React.FC = () => {
         <PiePlot />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <SwitchButton />
+        <MoneyData />
       </TabPanel>
     </div>
   );

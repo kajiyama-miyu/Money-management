@@ -8,6 +8,7 @@ import EditTable from "../EditTable";
 import dayjs from "dayjs";
 import { ItemType } from "../../redux/addSchedule/slice";
 import { EditItemType } from "../../components/AddScheduleDialog/edit";
+import EditIncome from "../EditIncome";
 
 const SwitchButton: React.FC = () => {
   const moneyData = useSelector(selectMoneyData);
@@ -100,6 +101,12 @@ const SwitchButton: React.FC = () => {
               },
             ]}
           />
+          <EditTable
+            newDate={changeDate}
+            isOpen={dialogOpen}
+            doClose={() => handleClose()}
+            moneyInfo={moneyInfo}
+          ></EditTable>
         </TabPanel>
         <TabPanel>
           <MaterialTable
@@ -116,20 +123,19 @@ const SwitchButton: React.FC = () => {
                 icon: "edit",
                 tooltip: "Edit Item",
                 onClick: (_, rowData) => {
-                  alert("Open edit page of " + (rowData as any).itemName + ".");
-                  console.log("rowData", rowData);
+                  onClickOpen(rowData as EditItemType);
                 },
               },
             ]}
           />
+          <EditIncome
+            newDate={changeDate}
+            isOpen={dialogOpen}
+            doClose={() => handleClose()}
+            moneyInfo={moneyInfo}
+          ></EditIncome>
         </TabPanel>
       </Tabs>
-      <EditTable
-        newDate={changeDate}
-        isOpen={dialogOpen}
-        doClose={() => handleClose()}
-        moneyInfo={moneyInfo}
-      ></EditTable>
     </div>
   );
 };
