@@ -1,13 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { RootState } from "../rootReducer";
-import dayjs from "dayjs";
 import {
   AddIncomeType,
   AddItemType,
 } from "../../components/AddScheduleDialog/index";
 import { EditItemType } from "../../components/AddScheduleDialog/edit";
-import { access } from "fs";
 
 export type ItemType = {
   moneyId: number;
@@ -15,7 +13,7 @@ export type ItemType = {
   amount: number;
   jenre: string;
   details: string;
-  date: dayjs.Dayjs;
+  date: Date;
 };
 
 export type IncomeType = {
