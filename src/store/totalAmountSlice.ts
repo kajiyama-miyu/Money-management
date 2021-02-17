@@ -21,6 +21,7 @@ export const fetchInitialState = createAsyncThunk(
   "covid/getExpenses",
   async (arg: { userNum: string; month: number; year: number }) => {
     const { userNum, month, year } = arg;
+
     const { data } = await axios.get<number>(
       "http://localhost:8080/getTotalExpense",
       {
