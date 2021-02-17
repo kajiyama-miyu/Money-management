@@ -29,7 +29,7 @@ import {
   fetchUpdateIncome,
 } from "../store/moneyDataSlice";
 import { EditItemType } from "../components/AddScheduleDialog/edit";
-import { EditIncomeType } from "./AddScheduleDialog/edit";
+import { EditIncomeType } from "./AddScheduleDialog/incomeEdit";
 const spacer = { margin: "4px, 0" };
 
 const styles: { [key: string]: React.CSSProperties } = {
@@ -126,7 +126,7 @@ const EditIncome: React.FC<Props> = (props) => {
       details: details,
       date: date!,
     });
-    console.log("arg", arg);
+
     dispatch(fetchUpdateIncome(arg));
 
     doClose();
@@ -134,7 +134,6 @@ const EditIncome: React.FC<Props> = (props) => {
 
   //削除の処理
   const handleDeteleSchedule = () => {
-    console.log(moneyId);
     dispatch(deleteIncome(arg));
     doClose();
   };
