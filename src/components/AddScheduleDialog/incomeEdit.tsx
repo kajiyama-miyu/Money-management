@@ -22,11 +22,7 @@ import { withStyles } from "@material-ui/styles";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import dayjs from "dayjs";
 import DateFnsUtils from "@date-io/date-fns";
-import {
-  updateExpense,
-  IncomeType,
-  updateIncome,
-} from "../../redux/addSchedule/slice";
+import { IncomeType, updateIncome } from "../../redux/addSchedule/slice";
 import { useDispatch } from "react-redux";
 
 const spacer = { margin: "4px, 0" };

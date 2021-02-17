@@ -29,7 +29,7 @@ import {
   fetchUpdateIncome,
 } from "../store/moneyDataSlice";
 import { EditItemType } from "../components/AddScheduleDialog/edit";
-import { EditIncomeType } from "./AddScheduleDialog/edit";
+import { EditIncomeType } from "./AddScheduleDialog/incomeEdit";
 const spacer = { margin: "4px, 0" };
 
 const styles: { [key: string]: React.CSSProperties } = {
@@ -46,35 +46,36 @@ type Props = {
   newDate: dayjs.Dayjs | null;
   isOpen: boolean;
   doClose: () => void;
-  moneyInfo: EditItemType;
+  incomeInfo: EditIncomeType;
 };
 
 const EditIncome: React.FC<Props> = (props) => {
-  const { isOpen, doClose, moneyInfo } = props;
-  const [moneyId, setMoneyId] = useState(moneyInfo.moneyId);
-  const [amount, setAmount] = useState(moneyInfo.amount);
-  const [jenre, setJenre] = useState(moneyInfo.jenre);
-  const [details, setDetails] = useState(moneyInfo.details);
-  const [date, setDate] = useState<dayjs.Dayjs | null>(moneyInfo.date);
+  const { isOpen, doClose, incomeInfo } = props;
+
+  const [incomeId, setIncomeId] = useState(incomeInfo.incomeId);
+  const [income, setIncome] = useState(incomeInfo.income);
+  const [jenre, setJenre] = useState(incomeInfo.jenre);
+  const [details, setDetails] = useState(incomeInfo.details);
+  const [date, setDate] = useState<dayjs.Dayjs | null>(incomeInfo.date);
   const [userNum, seUserNum] = useState<string>("abcde");
 
   useEffect(() => {
-    setMoneyId(moneyInfo.moneyId);
-    setAmount(moneyInfo.amount);
-    setJenre(moneyInfo.jenre);
-    setDetails(moneyInfo.details);
-    setDate(moneyInfo.date);
+    setIncomeId(incomeInfo.incomeId);
+    setIncome(incomeInfo.income);
+    setJenre(incomeInfo.jenre);
+    setDetails(incomeInfo.details);
+    setDate(incomeInfo.date);
   }, [
-    moneyInfo.amount,
-    moneyInfo.jenre,
-    moneyInfo.details,
-    moneyInfo.date,
-    moneyInfo.moneyId,
+    incomeInfo.incomeId,
+    incomeInfo.income,
+    incomeInfo.jenre,
+    incomeInfo.details,
+    incomeInfo.date,
   ]);
 
   //金額をセット
   const handleAmountValue = (value: string) => {
-    setAmount(Number(value));
+    setIncome(Number(value));
   };
   //カテゴリーをセット
   const handleJenreValue = (value: string) => {
@@ -93,10 +94,10 @@ const EditIncome: React.FC<Props> = (props) => {
     setDate(newDay);
   };
 
-  const [arg, setArg] = useState<EditItemType>({
-    moneyId: 0,
+  const [arg, setArg] = useState<EditIncomeType>({
+    incomeId: 0,
     userNum: "",
-    amount: 0,
+    income: 0,
     jenre: "",
     details: "",
     date: dayjs(),
@@ -107,21 +108,21 @@ const EditIncome: React.FC<Props> = (props) => {
   useEffect(() => {
     if (date != null) {
       setArg({
-        moneyId: moneyId,
+        incomeId: incomeId,
         userNum: userNum,
-        amount: amount,
+        income: income,
         jenre: jenre,
         details: details,
         date: date,
       });
     }
-  }, [moneyId, userNum, amount, jenre, details, date]);
+  }, [incomeId, userNum, income, jenre, details, date]);
 
   const handleSaveData = () => {
     setArg({
-      moneyId: moneyId,
+      incomeId: incomeId,
       userNum: userNum,
-      amount: amount,
+      income: income,
       jenre: jenre,
       details: details,
       date: date!,
@@ -134,7 +135,7 @@ const EditIncome: React.FC<Props> = (props) => {
 
   //削除の処理
   const handleDeteleSchedule = () => {
-    console.log(moneyId);
+    console.log("incomeId", arg.incomeId);
     dispatch(deleteIncome(arg));
     doClose();
   };
@@ -156,7 +157,7 @@ const EditIncome: React.FC<Props> = (props) => {
           autoFocus
           fullWidth
           placeholder="金額"
-          value={amount}
+          value={income}
           onChange={(e) => {
             handleAmountValue(e.target.value);
           }}

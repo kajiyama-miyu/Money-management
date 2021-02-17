@@ -10,18 +10,36 @@ import { ItemType } from "../../redux/addSchedule/slice";
 import { EditItemType } from "../../components/AddScheduleDialog/edit";
 import EditIncome from "../EditIncome";
 
+export type EditIncomeType = {
+  incomeId: number;
+  userNum: string;
+  income: number;
+  jenre: string;
+  details: string;
+  date: dayjs.Dayjs | null;
+};
+
 const SwitchButton: React.FC = () => {
   const moneyData = useSelector(selectMoneyData);
   const incomeData = useSelector(selectIncomeData);
+  console.log("moneyData", moneyData);
+  console.log("incomeData", incomeData);
   const [money, setMoney] = useState<Array<object>>([]);
   const [income, setIncome] = useState<Array<object>>([]);
   const [changeDate, setChangeDate] = useState<dayjs.Dayjs | null>(dayjs());
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [userNum, setUserNum] = useState("abc");
   const [moneyInfo, setMoneyInfo] = useState<EditItemType>({
     userNum: "abcde",
     moneyId: 0,
     amount: 0,
+    jenre: "",
+    date: dayjs(),
+    details: "",
+  });
+  const [incomeInfo, setIncomeInfo] = useState<EditIncomeType>({
+    userNum: "abcde",
+    incomeId: 0,
+    income: 0,
     jenre: "",
     date: dayjs(),
     details: "",
@@ -44,12 +62,12 @@ const SwitchButton: React.FC = () => {
   }, [moneyData]);
 
   const incomeList = useMemo(() => {
-    const incomeDataList: Array<ItemType> = [];
+    const incomeDataList: Array<EditIncomeType> = [];
     for (var i of incomeData) {
-      const data: ItemType = {
-        moneyId: i.moneyId,
+      const data: EditIncomeType = {
+        incomeId: i.incomeId,
         userNum: i.userNum,
-        amount: i.amount,
+        income: i.income,
         jenre: i.jenre,
         date: i.date,
         details: i.details,
@@ -68,6 +86,11 @@ const SwitchButton: React.FC = () => {
   const onClickOpen = (rowData: EditItemType) => {
     setDialogOpen(true);
     setMoneyInfo(rowData);
+  };
+
+  const onClickIncome = (rowData: EditIncomeType) => {
+    setDialogOpen(true);
+    setIncomeInfo(rowData);
   };
 
   const handleClose = () => {
@@ -108,13 +131,14 @@ const SwitchButton: React.FC = () => {
             moneyInfo={moneyInfo}
           ></EditTable>
         </TabPanel>
+
         <TabPanel>
           <MaterialTable
             title={"収入一覧"}
             columns={[
               { title: "日付", field: "date" },
               { title: "ジャンル", field: "jenre" },
-              { title: "価格(円)", field: "amount" },
+              { title: "価格(円)", field: "income" },
               { title: "詳細", field: "details" },
             ]}
             data={income}
@@ -123,7 +147,8 @@ const SwitchButton: React.FC = () => {
                 icon: "edit",
                 tooltip: "Edit Item",
                 onClick: (_, rowData) => {
-                  onClickOpen(rowData as EditItemType);
+                  console.log("rewData", rowData);
+                  onClickIncome(rowData as EditIncomeType);
                 },
               },
             ]}
@@ -132,7 +157,7 @@ const SwitchButton: React.FC = () => {
             newDate={changeDate}
             isOpen={dialogOpen}
             doClose={() => handleClose()}
-            moneyInfo={moneyInfo}
+            incomeInfo={incomeInfo}
           ></EditIncome>
         </TabPanel>
       </Tabs>
