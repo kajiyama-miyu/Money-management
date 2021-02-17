@@ -3,14 +3,15 @@ import axios from "axios";
 import { RootState } from "../store/index";
 import { ItemType } from "../redux/addSchedule/slice";
 import { EditItemType } from "../components/AddScheduleDialog/edit";
+import { EditIncomeType } from "../components/MoneyData/SwitchButton";
 
-// APIから取得するdataをtypeとして定義
 type MONEY_DATA = Array<ItemType>;
+type INCOME_DATA = Array<EditIncomeType>;
 
 // state
 export type moneyState = {
   moneyData: MONEY_DATA;
-  incomeData: MONEY_DATA;
+  incomeData: INCOME_DATA;
 };
 
 // stateの初期値
@@ -21,6 +22,9 @@ const initialState: moneyState = {
 
 interface moneyResponse {
   moneyInfoList: Array<ItemType>;
+}
+interface incomeResponse {
+  incomeInfoList: Array<EditIncomeType>;
 }
 
 // createAsyncThunk: 非同期に対応したAction Creator
@@ -39,6 +43,7 @@ export const fetchMoneyData = createAsyncThunk(
         },
       }
     );
+    console.log("monyIncfoList", data.moneyInfoList);
     return { data: data.moneyInfoList };
   }
 );
@@ -49,7 +54,7 @@ export const fetchIncomeData = createAsyncThunk(
   async (arg: { userNum: string; month: number; year: number }) => {
     const { userNum, month, year } = arg;
     // GenericsでAPIから取得するデータ型を保証
-    const { data } = await axios.get<moneyResponse>(
+    const { data } = await axios.get<incomeResponse>(
       "http://localhost:8080/getIncomeData",
       {
         params: {
@@ -59,7 +64,8 @@ export const fetchIncomeData = createAsyncThunk(
         },
       }
     );
-    return { data: data.moneyInfoList };
+    console.log("incomeInfoList", data.incomeInfoList);
+    return { data: data.incomeInfoList };
   }
 );
 
@@ -86,14 +92,14 @@ export const fetchUpdateData = createAsyncThunk(
 //収入を編集する
 export const fetchUpdateIncome = createAsyncThunk(
   "covid/updateIncome",
-  async (arg: EditItemType) => {
-    const { moneyId, userNum, amount, jenre, details, date } = arg;
-    const { data } = await axios.post<ItemType>(
+  async (arg: EditIncomeType) => {
+    const { incomeId, userNum, income, jenre, details, date } = arg;
+    const { data } = await axios.post<EditIncomeType>(
       "http://localhost:8080/updateIncome",
       {
-        moneyId,
+        incomeId,
         userNum,
-        amount,
+        income,
         jenre,
         details,
         date,
@@ -108,7 +114,7 @@ export const deleteExpenses = createAsyncThunk(
   "covid/deleteExpense",
   async (arg: { moneyId: number }) => {
     const { moneyId } = arg;
-    console.log("delete", moneyId);
+
     const { data } = await axios.get<number>(
       "http://localhost:8080/deleteExpenses",
       {
@@ -124,14 +130,14 @@ export const deleteExpenses = createAsyncThunk(
 //収入削除
 export const deleteIncome = createAsyncThunk(
   "covid/deleteIncome",
-  async (arg: { moneyId: number }) => {
-    const { moneyId } = arg;
-    console.log("delete", moneyId);
+  async (arg: { incomeId: number }) => {
+    const { incomeId } = arg;
+
     const { data } = await axios.get<number>(
       "http://localhost:8080/deleteIncomeData",
       {
         params: {
-          moneyId,
+          incomeId,
         },
       }
     );
@@ -177,7 +183,7 @@ const moneySlice = createSlice({
     });
     builder.addCase(fetchUpdateIncome.fulfilled, (state, action) => {
       const index = state.incomeData.findIndex(
-        (i) => i.moneyId === action.payload.data.moneyId
+        (i) => i.incomeId === action.payload.data.incomeId
       );
       state.incomeData[index] = action.payload.data;
     });
@@ -194,7 +200,7 @@ const moneySlice = createSlice({
     //収入の削除(削除した瞬間に画面からも削除するための処理)
     builder.addCase(deleteIncome.fulfilled, (state, actions) => {
       const newDatas = state.incomeData.filter(
-        (s) => s.moneyId !== actions.payload.data
+        (s) => s.incomeId !== actions.payload.data
       );
       return {
         ...state,
