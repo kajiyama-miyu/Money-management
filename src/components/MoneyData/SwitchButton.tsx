@@ -36,7 +36,7 @@ const SwitchButton: React.FC = () => {
     date: dayjs(),
     details: "",
   });
-  const [incomeInfo, setIncomeInfo] = useState<EditIncomeType>({
+  const [incomeInfo, setIncomeInfo] = useState<EditItemType>({
     userNum: "abcde",
     incomeId: 0,
     income: 0,
@@ -62,9 +62,9 @@ const SwitchButton: React.FC = () => {
   }, [moneyData]);
 
   const incomeList = useMemo(() => {
-    const incomeDataList: Array<EditIncomeType> = [];
+    const incomeDataList: Array<EditItemType> = [];
     for (var i of incomeData) {
-      const data: EditIncomeType = {
+      const data: EditItemType = {
         incomeId: i.incomeId,
         userNum: i.userNum,
         income: i.income,
@@ -88,7 +88,7 @@ const SwitchButton: React.FC = () => {
     setMoneyInfo(rowData);
   };
 
-  const onClickIncome = (rowData: EditIncomeType) => {
+  const onClickIncome = (rowData: EditItemType) => {
     setDialogOpen(true);
     setIncomeInfo(rowData);
   };
@@ -148,7 +148,7 @@ const SwitchButton: React.FC = () => {
                 tooltip: "Edit Item",
                 onClick: (_, rowData) => {
                   console.log("rewData", rowData);
-                  onClickIncome(rowData as EditIncomeType);
+                  onClickIncome(rowData as EditItemType);
                 },
               },
             ]}
