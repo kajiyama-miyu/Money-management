@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +25,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import { useDispatch } from "react-redux";
 import { deleteExpenses, fetchUpdateData } from "../store/moneyDataSlice";
 import { EditItemType } from "../components/AddScheduleDialog/edit";
+import { AuthContext } from "../auth/AuthProvider";
 const spacer = { margin: "4px, 0" };
 
 const styles: { [key: string]: React.CSSProperties } = {
@@ -51,7 +52,8 @@ const EditTable: React.FC<Props> = (props) => {
   const [jenre, setJenre] = useState(moneyInfo.jenre);
   const [details, setDetails] = useState(moneyInfo.details);
   const [date, setDate] = useState<dayjs.Dayjs | null>(moneyInfo.date);
-  const [userNum, seUserNum] = useState<string>("abcde");
+
+  const { uid } = useContext(AuthContext);
 
   useEffect(() => {
     setMoneyId(moneyInfo.moneyId);
@@ -103,25 +105,24 @@ const EditTable: React.FC<Props> = (props) => {
     if (date != null) {
       setArg({
         moneyId: moneyId,
-        userNum: userNum,
+        userNum: uid,
         amount: amount,
         jenre: jenre,
         details: details,
         date: date,
       });
     }
-  }, [moneyId, userNum, amount, jenre, details, date]);
+  }, [moneyId, uid, amount, jenre, details, date]);
 
   const handleSaveData = () => {
     setArg({
       moneyId: moneyId,
-      userNum: userNum,
+      userNum: uid,
       amount: amount,
       jenre: jenre,
       details: details,
       date: date!,
     });
-    console.log("arg", arg);
     dispatch(fetchUpdateData(arg));
 
     doClose();
@@ -129,7 +130,6 @@ const EditTable: React.FC<Props> = (props) => {
 
   //削除の処理
   const handleDeteleSchedule = () => {
-    console.log(moneyId);
     dispatch(deleteExpenses(arg));
     doClose();
   };
