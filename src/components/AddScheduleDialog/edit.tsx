@@ -194,6 +194,7 @@ const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
         <DialogContent>
           <TextField
             autoFocus
+            autoComplete="off"
             fullWidth
             type="text"
             placeholder="金額"
