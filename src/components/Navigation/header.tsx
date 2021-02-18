@@ -25,8 +25,13 @@ const StyledTypography = withStyles({
 
 const styles: { [key: string]: React.CSSProperties } = {
   logoutBtn: {
-    marginLeft: "300px",
+    marginLeft: "500px",
     backgroundColor: "#F08080",
+  },
+  name: {
+    marginLeft: "300px",
+    color: "#000000",
+    fontSize: "10opx",
   },
 };
 export type Props = {
@@ -62,6 +67,7 @@ const HeaderMenu: React.FC<Props> = React.memo(function HeaderMenu(props) {
           <Tab label="graph" icon={<PieChart />} />
           <Tab label="table" icon={<TableChart />} />
         </Tabs>
+
         {currentUser && (
           <Button variant="outlined" style={styles.logoutBtn} onClick={logout}>
             Logout
