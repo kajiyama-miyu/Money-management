@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AuthContext } from "../../auth/AuthProvider";
 import {
   AppBar,
   Toolbar,
@@ -6,6 +7,7 @@ import {
   withStyles,
   Tab,
   Tabs,
+  Button,
 } from "@material-ui/core";
 import { CalendarToday, PieChart, TableChart } from "@material-ui/icons";
 
@@ -21,6 +23,12 @@ const StyledTypography = withStyles({
   root: { margin: "0 30px 0 10px" },
 })(Typography);
 
+const styles: { [key: string]: React.CSSProperties } = {
+  logoutBtn: {
+    marginLeft: "300px",
+    backgroundColor: "#F08080",
+  },
+};
 export type Props = {
   onChengeTab: (e: React.ChangeEvent<{}>, value: number) => void;
   value: number;
@@ -28,6 +36,7 @@ export type Props = {
 
 const HeaderMenu: React.FC<Props> = React.memo(function HeaderMenu(props) {
   const { onChengeTab, value } = props;
+  const { logout, currentUser } = useContext(AuthContext);
 
   return (
     <StyledAppbar>
@@ -53,6 +62,11 @@ const HeaderMenu: React.FC<Props> = React.memo(function HeaderMenu(props) {
           <Tab label="graph" icon={<PieChart />} />
           <Tab label="table" icon={<TableChart />} />
         </Tabs>
+        {currentUser && (
+          <Button variant="outlined" style={styles.logoutBtn} onClick={logout}>
+            Logout
+          </Button>
+        )}
       </StyledToolbar>
     </StyledAppbar>
   );

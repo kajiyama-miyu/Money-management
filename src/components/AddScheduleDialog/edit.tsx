@@ -35,7 +35,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: "#F08080",
   },
   incomeButton: {
-    backgroundColor: "rgb(121, 134, 203)",
+    backgroundColor: "#F08080",
   },
   saveButton: {
     backgroundColor: "#87CEFA",
@@ -209,6 +209,10 @@ const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
               <MenuItem value="日用品">日用品</MenuItem>
               <MenuItem value="衣服">衣服</MenuItem>
               <MenuItem value="交通費">交通費</MenuItem>
+              <MenuItem value="家賃・光熱費">家賃・光熱費</MenuItem>
+              <MenuItem value="趣味">趣味</MenuItem>
+              <MenuItem value="美容">美容</MenuItem>
+              <MenuItem value="医療費">医療費</MenuItem>
               <MenuItem value="その他">その他</MenuItem>
             </Select>
           </Grid>
