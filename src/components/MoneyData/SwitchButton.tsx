@@ -13,7 +13,7 @@ import { AuthContext } from "../../auth/AuthProvider";
 
 export type EditIncomeType = {
   incomeId: number;
-  userNum: string;
+  userNum: string | null;
   income: number;
   jenre: string;
   details: string;
@@ -62,9 +62,9 @@ const SwitchButton: React.FC = () => {
   }, [moneyData]);
 
   const incomeList = useMemo(() => {
-    const incomeDataList: Array<EditItemType> = [];
+    const incomeDataList: Array<EditIncomeType> = [];
     for (var i of incomeData) {
-      const data: EditItemType = {
+      const data: EditIncomeType = {
         incomeId: i.incomeId,
         userNum: i.userNum,
         income: i.income,
@@ -88,7 +88,7 @@ const SwitchButton: React.FC = () => {
     setMoneyInfo(rowData);
   };
 
-  const onClickIncome = (rowData: EditItemType) => {
+  const onClickIncome = (rowData: EditIncomeType) => {
     setDialogOpen(true);
     setIncomeInfo(rowData);
   };
