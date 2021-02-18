@@ -205,7 +205,6 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
     }, [uid, amount, expenseJenre, details, date, incomeJenre, dialogStatus]);
 
     const handleSaveData = () => {
-      console.log("arg", arg);
       if (dialogStatus) {
         dispatch(fetchMoneyData(arg));
       } else {
@@ -289,6 +288,7 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
           <DialogContent>
             <TextField
               autoFocus
+              autoComplete="off"
               fullWidth
               type="text"
               placeholder="金額"
