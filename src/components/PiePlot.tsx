@@ -33,7 +33,7 @@ const PiePlot: React.FC = () => {
 
   const dispatch = useDispatch();
   const [arg, setArg] = useState<{
-    userNum: string;
+    userNum: string | null;
     year: number;
     month: number;
   }>({ userNum: uid, year: year, month: month });
