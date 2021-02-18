@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useContext } from "react";
 import { useSelector } from "react-redux";
 import { selectIncomeData, selectMoneyData } from "../../store/moneyDataSlice";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import { ItemType } from "../../redux/addSchedule/slice";
 import { EditItemType } from "../../components/AddScheduleDialog/edit";
 import EditIncome from "../EditIncome";
+import { AuthContext } from "../../auth/AuthProvider";
 
 export type EditIncomeType = {
   incomeId: number;
@@ -22,14 +23,13 @@ export type EditIncomeType = {
 const SwitchButton: React.FC = () => {
   const moneyData = useSelector(selectMoneyData);
   const incomeData = useSelector(selectIncomeData);
-  console.log("moneyData", moneyData);
-  console.log("incomeData", incomeData);
   const [money, setMoney] = useState<Array<object>>([]);
   const [income, setIncome] = useState<Array<object>>([]);
   const [changeDate, setChangeDate] = useState<dayjs.Dayjs | null>(dayjs());
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { uid } = useContext(AuthContext);
   const [moneyInfo, setMoneyInfo] = useState<EditItemType>({
-    userNum: "abcde",
+    userNum: uid,
     moneyId: 0,
     amount: 0,
     jenre: "",
@@ -37,7 +37,7 @@ const SwitchButton: React.FC = () => {
     details: "",
   });
   const [incomeInfo, setIncomeInfo] = useState<EditIncomeType>({
-    userNum: "abcde",
+    userNum: uid,
     incomeId: 0,
     income: 0,
     jenre: "",
@@ -147,7 +147,6 @@ const SwitchButton: React.FC = () => {
                 icon: "edit",
                 tooltip: "Edit Item",
                 onClick: (_, rowData) => {
-                  console.log("rewData", rowData);
                   onClickIncome(rowData as EditIncomeType);
                 },
               },
