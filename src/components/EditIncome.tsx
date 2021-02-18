@@ -29,7 +29,8 @@ import {
   fetchUpdateIncome,
 } from "../store/moneyDataSlice";
 import { EditItemType } from "../components/AddScheduleDialog/edit";
-import { EditIncomeType } from "./AddScheduleDialog/incomeEdit";
+
+// import { EditIncomeType } from "./AddScheduleDialog/incomeEdit";
 const spacer = { margin: "4px, 0" };
 
 const styles: { [key: string]: React.CSSProperties } = {
@@ -46,7 +47,7 @@ type Props = {
   newDate: dayjs.Dayjs | null;
   isOpen: boolean;
   doClose: () => void;
-  incomeInfo: EditIncomeType;
+  incomeInfo: EditItemType;
 };
 
 const EditIncome: React.FC<Props> = (props) => {
@@ -75,7 +76,7 @@ const EditIncome: React.FC<Props> = (props) => {
 
   //金額をセット
   const handleAmountValue = (value: string) => {
-    setIncome(Number(value));
+    // setIncome(value);
   };
   //カテゴリーをセット
   const handleJenreValue = (value: string) => {
@@ -94,7 +95,7 @@ const EditIncome: React.FC<Props> = (props) => {
     setDate(newDay);
   };
 
-  const [arg, setArg] = useState<EditIncomeType>({
+  const [arg, setArg] = useState<EditItemType>({
     incomeId: 0,
     userNum: "",
     income: 0,
