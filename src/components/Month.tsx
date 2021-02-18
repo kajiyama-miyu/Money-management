@@ -6,8 +6,6 @@ import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
 type Props = {
-  // initialState: dayState;
-  // setYearMonth: (getYearMonth: dayState) => void;
   onClickPreviousMonth: () => void;
   onClickNextMonth: () => void;
   year: number;

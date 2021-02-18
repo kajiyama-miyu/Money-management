@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import "./App.css";
 import PrivateRoute from "./auth/PrivateRoute";
 import { AuthProvider } from "./auth/AuthProvider";
 import Login from "./auth/Login";
-import { Route, Switch, Router, BrowserRouter } from "react-router-dom";
+import { Route, Switch, BrowserRouter } from "react-router-dom";
 import Home from "./components/Home";
 
 const App: React.FC = () => {
