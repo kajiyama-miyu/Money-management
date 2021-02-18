@@ -8,7 +8,7 @@ import {
   getMonth,
 } from "../../services/calendar";
 import { DayState } from "../../redux/calendar/slice";
-import { ItemType, IncomeType } from "../../redux/addSchedule/slice";
+import { ItemType } from "../../redux/addSchedule/slice";
 import Schedule from "../Schedule/index";
 import Income from "../Schedule/income";
 
@@ -41,13 +41,13 @@ type Props = {
   day: dayjs.Dayjs;
   month: DayState;
   schedules: Array<ItemType>;
-  income: Array<IncomeType>;
+  income: Array<ItemType>;
   onClickSchedule: (
     schedule: ItemType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
   onClickIncome: (
-    income: IncomeType,
+    income: ItemType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
 };
