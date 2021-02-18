@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IncomeType, ItemType } from "../addSchedule/slice";
+import { ItemType } from "../addSchedule/slice";
 import { RootState } from "../rootReducer";
 import dayjs from "dayjs";
 import "dayjs/locale/ja";
@@ -7,7 +7,7 @@ dayjs.locale("ja");
 
 export type CurrentSchduleType = {
   item: ItemType | null;
-  income: IncomeType | null;
+  income: ItemType | null;
   isDialogOpen: boolean;
   isIncomeDialogOpen: boolean;
 };
@@ -26,7 +26,7 @@ export const currentScheduleSlice = createSlice({
     setCurrentSchedule: (state, action: PayloadAction<ItemType>) => {
       state.item = action.payload;
     },
-    setCurrentIncome: (state, actions: PayloadAction<IncomeType>) => {
+    setCurrentIncome: (state, actions: PayloadAction<ItemType>) => {
       state.income = actions.payload;
     },
     setOpenCurrentDialog: (state) => {

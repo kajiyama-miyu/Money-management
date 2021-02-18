@@ -6,7 +6,7 @@ import { EditItemType } from "../components/AddScheduleDialog/edit";
 import { EditIncomeType } from "../components/MoneyData/SwitchButton";
 
 type MONEY_DATA = Array<ItemType>;
-type INCOME_DATA = Array<EditIncomeType>;
+type INCOME_DATA = Array<EditItemType>;
 
 // state
 export type moneyState = {
@@ -24,7 +24,7 @@ interface moneyResponse {
   moneyInfoList: Array<ItemType>;
 }
 interface incomeResponse {
-  incomeInfoList: Array<EditIncomeType>;
+  incomeInfoList: Array<EditItemType>;
 }
 
 // createAsyncThunk: 非同期に対応したAction Creator
@@ -92,9 +92,9 @@ export const fetchUpdateData = createAsyncThunk(
 //収入を編集する
 export const fetchUpdateIncome = createAsyncThunk(
   "covid/updateIncome",
-  async (arg: EditIncomeType) => {
+  async (arg: EditItemType) => {
     const { incomeId, userNum, income, jenre, details, date } = arg;
-    const { data } = await axios.post<EditIncomeType>(
+    const { data } = await axios.post<EditItemType>(
       "http://localhost:8080/updateIncome",
       {
         incomeId,
@@ -112,7 +112,7 @@ export const fetchUpdateIncome = createAsyncThunk(
 //支出削除
 export const deleteExpenses = createAsyncThunk(
   "covid/deleteExpense",
-  async (arg: { moneyId: number }) => {
+  async (arg: { moneyId?: number | undefined }) => {
     const { moneyId } = arg;
 
     const { data } = await axios.get<number>(
@@ -130,7 +130,7 @@ export const deleteExpenses = createAsyncThunk(
 //収入削除
 export const deleteIncome = createAsyncThunk(
   "covid/deleteIncome",
-  async (arg: { incomeId: number }) => {
+  async (arg: { incomeId?: number | undefined }) => {
     const { incomeId } = arg;
 
     const { data } = await axios.get<number>(

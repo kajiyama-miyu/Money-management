@@ -1,13 +1,13 @@
 import { isSameDay } from "./calendar";
 import { CalendarType } from "../components/CalendarBoard/index";
-import { IncomeType, ItemType } from "../redux/addSchedule/slice";
+import { ItemType } from "../redux/addSchedule/slice";
 import dayjs from "dayjs";
 
 //カレンダーの作成とカレンダーの日付と同じ日に金額を表示する処理
 export const setSchedules = (
   calendar: CalendarType,
   schedules: Array<ItemType>,
-  income: Array<IncomeType>
+  income: Array<ItemType>
 ) => {
   return calendar.map((c) => ({
     date: c,

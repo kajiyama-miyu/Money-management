@@ -13,6 +13,7 @@ const PrivateRoute: React.FC<Props> = ({
   ...options
 }) => {
   const { currentUser } = useContext(AuthContext);
+
   const Component = currentUser ? RouteCmponent : Login;
 
   console.log("currentUser", currentUser);

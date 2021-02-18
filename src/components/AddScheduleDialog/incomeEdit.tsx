@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,8 +22,11 @@ import { withStyles } from "@material-ui/styles";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import dayjs from "dayjs";
 import DateFnsUtils from "@date-io/date-fns";
-import { IncomeType, updateIncome } from "../../redux/addSchedule/slice";
+import { ItemType, updateIncome } from "../../redux/addSchedule/slice";
 import { useDispatch } from "react-redux";
+import { AuthContext } from "../../auth/AuthProvider";
+import { EditItemType } from "./edit";
+import { useForm } from "react-hook-form";
 
 const spacer = { margin: "4px, 0" };
 
@@ -45,6 +48,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: "#4169E1",
     border: "1px solid #4169E1",
   },
+  title: {
+    marginBottom: "20px",
+  },
 };
 
 const Title = withStyles({
@@ -54,42 +60,36 @@ const Title = withStyles({
 type Props = {
   doClose: () => void;
   isEditOpen: boolean;
-  currentIncomeData: IncomeType | null;
-  ArrayIncomeData: Array<IncomeType>;
-};
-
-export type EditIncomeType = {
-  incomeId: number;
-  userNum: string;
-  income: number;
-  jenre: string;
-  details: string;
-  date: dayjs.Dayjs | null;
+  currentIncomeData: ItemType | null;
+  ArrayIncomeData: Array<ItemType>;
 };
 
 //金額入力フォーム
 const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
   const { isEditOpen, doClose, currentIncomeData, ArrayIncomeData } = props;
+  const { uid } = useContext(AuthContext);
+  const { register, handleSubmit, errors, formState } = useForm<EditItemType>({
+    mode: "onChange",
+  });
 
   //編集したいデータのidと一致する物を抽出（idは唯一の値なので抽出できる値は一つだけ）
   const newData = ArrayIncomeData.filter(
     (s) => s.incomeId === currentIncomeData?.incomeId
   );
 
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<string | undefined>("");
   const [incomeJenre, setIncomeJenre] = useState("給料");
   const [details, setDetails] = useState("");
   const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs());
-  const [userNum, seUserNum] = useState<string>("abc");
   const [dialogStatus, setDialogStatus] = useState(true);
-  const [incomeId, setIncomeId] = useState(0);
+  const [incomeId, setIncomeId] = useState<number | undefined>(0);
 
   //編集したいデータをvalueにつめる(条件分岐で支出か収入かを分ける)
   useEffect(() => {
     if (newData !== null) {
       for (let n of newData) {
         setIncomeId(n.incomeId);
-        setAmount(n.income);
+        setAmount(n.income?.toString());
         setIncomeJenre(n.jenre);
         setDetails(n.details);
         setDate(dayjs(n.date));
@@ -99,7 +99,7 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
 
   //金額をセット
   const handleAmountValue = (value: string) => {
-    setAmount(Number(value));
+    setAmount(value);
   };
   //カテゴリーをセット
   const handleIncomeJenreValue = (value: string) => {
@@ -119,7 +119,7 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
   };
 
   //valueをまとめて送るためのオブジェクト
-  const [argIncome, setArgIncome] = useState<EditIncomeType>({
+  const [argIncome, setArgIncome] = useState<EditItemType>({
     incomeId: 0,
     userNum: "",
     income: 0,
@@ -133,13 +133,15 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
   useEffect(() => {
     setArgIncome({
       incomeId: incomeId,
-      userNum: userNum,
-      income: amount,
+      userNum: uid,
+      income: Number(amount),
       jenre: incomeJenre,
       details: details,
       date: date,
     });
-  }, [userNum, amount, details, date, incomeJenre, dialogStatus]);
+  }, [uid, amount, details, date, incomeJenre, dialogStatus]);
+
+  const onSubmit = (data: EditItemType): void => console.log(data);
 
   //保存したら元のデータをつめる
   const handleSaveData = () => {
@@ -149,7 +151,7 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
 
     if (newData !== null) {
       for (let n of newData) {
-        setAmount(n.income);
+        setAmount(n.income?.toString());
         setIncomeJenre(n.jenre);
         setDetails(n.details);
         setDate(dayjs(n.date));
@@ -163,7 +165,7 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
 
     if (newData !== null) {
       for (let n of newData) {
-        setAmount(n.income);
+        setAmount(n.income?.toString());
         setIncomeJenre(n.jenre);
         setDetails(n.details);
         setDate(dayjs(n.date));
@@ -172,91 +174,115 @@ const UpDateIncomeDialog: React.FC<Props> = React.memo((props) => {
   }, [doClose, incomeJenre, newData]);
 
   return (
-    <Dialog open={isEditOpen} onClose={handleClose} maxWidth="xs" fullWidth>
-      <DialogActions>
-        <div style={styles.closeButton}>
-          <IconButton onClick={handleClose} size="small">
-            <Close />
-          </IconButton>
-        </div>
-      </DialogActions>
-      <Typography align="center" variant="h5">
-        編集
-      </Typography>
-      <DialogContent>
-        <Title
-          autoFocus
-          fullWidth
-          placeholder="金額"
-          value={amount}
-          onChange={(e) => {
-            handleAmountValue(e.target.value);
-          }}
-        />
-        <Grid container spacing={1} alignItems="center" justify="space-between">
-          <Grid item>
-            <CategoryOutlined />
-          </Grid>
-          <Grid item xs={10}>
-            <Select
-              value={incomeJenre}
-              onChange={(e) => {
-                handleIncomeJenreValue(e.target.value as string);
-              }}
-              fullWidth
-              autoFocus
-            >
-              <MenuItem value="給料">給料</MenuItem>
-              <MenuItem value="その他">その他</MenuItem>
-            </Select>
-          </Grid>
-        </Grid>
-        <Grid container spacing={1} alignItems="center" justify="space-between">
-          <Grid item>
-            <NoteOutlined />
-          </Grid>
-          <Grid item xs={10}>
-            <TextField
-              style={spacer}
-              fullWidth
-              placeholder="メモ"
-              value={details}
-              onChange={(e) => {
-                handleDetailsValue(e.target.value);
-              }}
-            />
-          </Grid>
-        </Grid>
-        <Grid container spacing={1} alignItems="center" justify="space-between">
-          <Grid item>
-            <AccessTime />
-          </Grid>
-          <Grid item xs={10}>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <DatePicker
-                value={date}
-                onChange={(d) => handleDateValue(d)}
-                variant="inline"
-                format="yyyy年M月d日"
-                animateYearScrolling
-                disableToolbar
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Dialog open={isEditOpen} onClose={handleClose} maxWidth="xs" fullWidth>
+        <DialogActions>
+          <div style={styles.closeButton}>
+            <IconButton onClick={handleClose} size="small">
+              <Close />
+            </IconButton>
+          </div>
+        </DialogActions>
+        <Typography align="center" variant="h5">
+          編集
+        </Typography>
+        <DialogContent>
+          <TextField
+            autoFocus
+            fullWidth
+            type="text"
+            placeholder="金額"
+            value={amount}
+            name="amount"
+            inputRef={register({ required: true, pattern: /^[0-9]+$/ })}
+            error={Boolean(errors.amount)}
+            helperText={errors.amount && "数字を入力してください"}
+            style={styles.title}
+            onChange={(e) => {
+              handleAmountValue(e.target.value);
+            }}
+          />
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            justify="space-between"
+          >
+            <Grid item>
+              <CategoryOutlined />
+            </Grid>
+            <Grid item xs={10}>
+              <Select
+                value={incomeJenre}
+                onChange={(e) => {
+                  handleIncomeJenreValue(e.target.value as string);
+                }}
                 fullWidth
-                style={spacer}
-              />
-            </MuiPickersUtilsProvider>
+                autoFocus
+              >
+                <MenuItem value="給料">給料</MenuItem>
+                <MenuItem value="その他">その他</MenuItem>
+              </Select>
+            </Grid>
           </Grid>
-        </Grid>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          style={styles.saveButton}
-          variant="outlined"
-          onClick={() => handleSaveData()}
-        >
-          保存
-        </Button>
-      </DialogActions>
-    </Dialog>
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            justify="space-between"
+          >
+            <Grid item>
+              <NoteOutlined />
+            </Grid>
+            <Grid item xs={10}>
+              <TextField
+                style={spacer}
+                fullWidth
+                placeholder="メモ"
+                value={details}
+                onChange={(e) => {
+                  handleDetailsValue(e.target.value);
+                }}
+              />
+            </Grid>
+          </Grid>
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            justify="space-between"
+          >
+            <Grid item>
+              <AccessTime />
+            </Grid>
+            <Grid item xs={10}>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <DatePicker
+                  value={date}
+                  onChange={(d) => handleDateValue(d)}
+                  variant="inline"
+                  format="yyyy年M月d日"
+                  animateYearScrolling
+                  disableToolbar
+                  fullWidth
+                  style={spacer}
+                />
+              </MuiPickersUtilsProvider>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            style={styles.saveButton}
+            variant="outlined"
+            disabled={!formState.isValid}
+            onClick={() => handleSaveData()}
+          >
+            保存
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </form>
   );
 });
 
