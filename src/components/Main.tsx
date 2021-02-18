@@ -12,9 +12,6 @@ export type Props = {
 
 const TabPanel: React.FC<Props> = React.memo(function TablePanel(props) {
   const { index, value, children } = props;
-  console.log(index);
-  console.log(value);
-  console.log(children);
   return (
     <div
       role="tabpanel"
