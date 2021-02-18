@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
 import { selectDataDaily, fetchDataDaily } from "../store/piePlotSlice";
@@ -6,19 +6,21 @@ import Month from "../components/Month";
 import dayjs from "dayjs";
 import TotalAmount from "../components/TotalAmount";
 import { fetchInitialState, fetchTotalIncome } from "../store/totalAmountSlice";
+import { AuthContext } from "../auth/AuthProvider";
 
 const PiePlot: React.FC = () => {
   const dataDaily = useSelector(selectDataDaily);
   const [amount, setAmount] = useState<Array<number>>([]);
-  const [userNum, setUserNum] = useState("abcde");
   const [year, setYear] = useState(dayjs().year());
   const [month, setMonth] = useState(dayjs().month() + 1);
+
+  const { uid } = useContext(AuthContext);
 
   const onClickPreviousMonth = () => {
     const day = dayjs(`${year}-${month}`).add(-1, "month");
     setYear(day.year());
     setMonth(day.month() + 1);
-    setArg({ userNum: userNum, year: day.year(), month: day.month() + 1 });
+    setArg({ userNum: uid, year: day.year(), month: day.month() + 1 });
   };
 
   const onClickNextMonth = () => {
@@ -26,7 +28,7 @@ const PiePlot: React.FC = () => {
     console.log(day);
     setYear(day.year());
     setMonth(day.month() + 1);
-    setArg({ userNum: userNum, year: day.year(), month: day.month() + 1 });
+    setArg({ userNum: uid, year: day.year(), month: day.month() + 1 });
   };
 
   const dispatch = useDispatch();
@@ -34,7 +36,7 @@ const PiePlot: React.FC = () => {
     userNum: string;
     year: number;
     month: number;
-  }>({ userNum: userNum, year: year, month: month });
+  }>({ userNum: uid, year: year, month: month });
 
   useEffect(() => {
     dispatch(fetchDataDaily(arg));

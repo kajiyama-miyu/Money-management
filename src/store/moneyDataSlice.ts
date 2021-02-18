@@ -43,7 +43,6 @@ export const fetchMoneyData = createAsyncThunk(
         },
       }
     );
-    console.log("monyIncfoList", data.moneyInfoList);
     return { data: data.moneyInfoList };
   }
 );
@@ -64,7 +63,6 @@ export const fetchIncomeData = createAsyncThunk(
         },
       }
     );
-    console.log("incomeInfoList", data.incomeInfoList);
     return { data: data.incomeInfoList };
   }
 );

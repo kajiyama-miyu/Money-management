@@ -35,7 +35,6 @@ export const fetchDataDaily = createAsyncThunk(
         },
       }
     );
-    console.log(data.pieDataList);
     return { data: data.pieDataList };
   }
 );
