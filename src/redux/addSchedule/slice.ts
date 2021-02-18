@@ -43,7 +43,6 @@ export const fetchMoneyData = createAsyncThunk(
   "schedules/createSchedule",
   async (arg: AddItemType) => {
     const { userNum, amount, jenre, details, date } = arg;
-    console.log(amount);
     const { data } = await axios.post<ItemType>(
       "http://localhost:8080/postExpense",
       {
@@ -91,6 +90,7 @@ export const fetchCurrentData = createAsyncThunk(
         },
       }
     );
+    console.log("data", data);
     return { data: data };
   }
 );
@@ -195,7 +195,6 @@ export const scheduleSlice = createSlice({
   extraReducers: (builder) => {
     //支出の保存（入力したらそのタイミングで画面に反映させるための処理）
     builder.addCase(fetchMoneyData.fulfilled, (state, actions) => {
-      // const formatedSchedule = formatSchedule(actions.payload.data);
       return {
         ...state,
         isLoading: false,
