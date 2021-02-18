@@ -26,6 +26,7 @@ import { useDispatch } from "react-redux";
 import { deleteExpenses, fetchUpdateData } from "../store/moneyDataSlice";
 import { EditItemType } from "../components/AddScheduleDialog/edit";
 import { AuthContext } from "../auth/AuthProvider";
+import { useForm } from "react-hook-form";
 const spacer = { margin: "4px, 0" };
 
 const styles: { [key: string]: React.CSSProperties } = {
@@ -33,10 +34,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     textAlign: "right",
   },
 };
-
-const Title = withStyles({
-  root: { marginBottom: 32, fontSize: 22 },
-})(Input);
 
 type Props = {
   newDate: dayjs.Dayjs | null;
@@ -48,16 +45,19 @@ type Props = {
 const EditTable: React.FC<Props> = (props) => {
   const { isOpen, doClose, moneyInfo } = props;
   const [moneyId, setMoneyId] = useState(moneyInfo.moneyId);
-  const [amount, setAmount] = useState(moneyInfo.amount);
+  const [amount, setAmount] = useState("");
   const [jenre, setJenre] = useState(moneyInfo.jenre);
   const [details, setDetails] = useState(moneyInfo.details);
   const [date, setDate] = useState<dayjs.Dayjs | null>(moneyInfo.date);
 
   const { uid } = useContext(AuthContext);
+  const { register, handleSubmit, errors, formState } = useForm<EditItemType>({
+    mode: "onChange",
+  });
 
   useEffect(() => {
     setMoneyId(moneyInfo.moneyId);
-    setAmount(moneyInfo.amount);
+    setAmount(moneyInfo.amount!.toString());
     setJenre(moneyInfo.jenre);
     setDetails(moneyInfo.details);
     setDate(moneyInfo.date);
@@ -71,7 +71,7 @@ const EditTable: React.FC<Props> = (props) => {
 
   //金額をセット
   const handleAmountValue = (value: string) => {
-    // setAmount(value);
+    setAmount(value);
   };
   //カテゴリーをセット
   const handleJenreValue = (value: string) => {
@@ -106,7 +106,7 @@ const EditTable: React.FC<Props> = (props) => {
       setArg({
         moneyId: moneyId,
         userNum: uid,
-        amount: amount,
+        amount: Number(amount),
         jenre: jenre,
         details: details,
         date: date,
@@ -118,7 +118,7 @@ const EditTable: React.FC<Props> = (props) => {
     setArg({
       moneyId: moneyId,
       userNum: uid,
-      amount: amount,
+      amount: Number(amount),
       jenre: jenre,
       details: details,
       date: date!,
@@ -147,11 +147,15 @@ const EditTable: React.FC<Props> = (props) => {
         </div>
       </DialogActions>
       <DialogContent>
-        <Title
+        <TextField
           autoFocus
           fullWidth
           placeholder="金額"
           value={amount}
+          name="amount"
+          inputRef={register({ required: true, pattern: /^[0-9]+$/ })}
+          error={Boolean(errors.amount)}
+          helperText={errors.amount && "数字を入力してください"}
           onChange={(e) => {
             handleAmountValue(e.target.value);
           }}
@@ -221,6 +225,7 @@ const EditTable: React.FC<Props> = (props) => {
         <Button
           color="primary"
           variant="outlined"
+          disabled={!formState.isValid}
           onClick={() => handleSaveData()}
         >
           保存

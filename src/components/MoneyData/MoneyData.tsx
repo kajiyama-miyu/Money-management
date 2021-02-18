@@ -16,7 +16,7 @@ const MoneyData: React.FC = () => {
   const { uid } = useContext(AuthContext);
 
   const [arg, setArg] = useState<{
-    userNum: string;
+    userNum: string | null;
     year: number;
     month: number;
   }>({ userNum: uid, year: year, month: month });

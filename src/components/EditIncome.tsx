@@ -23,13 +23,13 @@ import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import dayjs from "dayjs";
 import DateFnsUtils from "@date-io/date-fns";
 import { useDispatch } from "react-redux";
-import {
-  deleteIncome,
-  fetchUpdateData,
-  fetchUpdateIncome,
-} from "../store/moneyDataSlice";
-import { EditItemType } from "../components/AddScheduleDialog/edit";
-import { EditIncomeType } from "./AddScheduleDialog/incomeEdit";
+
+import { deleteIncome, fetchUpdateIncome } from "../store/moneyDataSlice";
+
+import { AuthContext } from "../auth/AuthProvider";
+import { EditIncomeType } from "./MoneyData/SwitchButton";
+import { useForm } from "react-hook-form";
+
 const spacer = { margin: "4px, 0" };
 
 const styles: { [key: string]: React.CSSProperties } = {
@@ -53,15 +53,24 @@ const EditIncome: React.FC<Props> = (props) => {
   const { isOpen, doClose, incomeInfo } = props;
 
   const [incomeId, setIncomeId] = useState(incomeInfo.incomeId);
-  const [income, setIncome] = useState(incomeInfo.income);
+  const [income, setIncome] = useState(incomeInfo.income!.toString());
   const [jenre, setJenre] = useState(incomeInfo.jenre);
   const [details, setDetails] = useState(incomeInfo.details);
   const [date, setDate] = useState<dayjs.Dayjs | null>(incomeInfo.date);
-  const [userNum, seUserNum] = useState<string>("abcde");
+
+  const [userNum, seUserNum] = useState<string | null>("");
+
+  const { uid } = useContext(AuthContext);
+  const { register, handleSubmit, errors, formState } = useForm<EditIncomeType>(
+    {
+      mode: "onChange",
+    }
+  );
+
 
   useEffect(() => {
     setIncomeId(incomeInfo.incomeId);
-    setIncome(incomeInfo.income);
+    setIncome(incomeInfo.income!.toString());
     setJenre(incomeInfo.jenre);
     setDetails(incomeInfo.details);
     setDate(incomeInfo.date);
@@ -75,7 +84,9 @@ const EditIncome: React.FC<Props> = (props) => {
 
   //金額をセット
   const handleAmountValue = (value: string) => {
-    setIncome(Number(value));
+
+    setIncome(value);
+
   };
   //カテゴリーをセット
   const handleJenreValue = (value: string) => {
@@ -110,7 +121,7 @@ const EditIncome: React.FC<Props> = (props) => {
       setArg({
         incomeId: incomeId,
         userNum: userNum,
-        income: income,
+        income: Number(income),
         jenre: jenre,
         details: details,
         date: date,
@@ -122,7 +133,7 @@ const EditIncome: React.FC<Props> = (props) => {
     setArg({
       incomeId: incomeId,
       userNum: userNum,
-      income: income,
+      income: Number(income),
       jenre: jenre,
       details: details,
       date: date!,
@@ -153,11 +164,15 @@ const EditIncome: React.FC<Props> = (props) => {
         </div>
       </DialogActions>
       <DialogContent>
-        <Title
+        <TextField
           autoFocus
           fullWidth
           placeholder="金額"
           value={income}
+          name="income"
+          inputRef={register({ required: true, pattern: /^[0-9]+$/ })}
+          error={Boolean(errors.income)}
+          helperText={errors.income && "数字を入力してください"}
           onChange={(e) => {
             handleAmountValue(e.target.value);
           }}
@@ -223,6 +238,7 @@ const EditIncome: React.FC<Props> = (props) => {
         <Button
           color="primary"
           variant="outlined"
+          disabled={!formState.isValid}
           onClick={() => handleSaveData()}
         >
           保存
