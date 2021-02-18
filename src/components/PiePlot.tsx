@@ -45,7 +45,17 @@ const PiePlot: React.FC = () => {
   //PieChart
   const createPiePlotData = (amount: Array<number>) => {
     let data = {
-      labels: ["食費", "日用品", "衣服", "交通費", "その他"],
+      labels: [
+        "食費",
+        "日用品",
+        "衣服",
+        "交通費",
+        "家賃・光熱費",
+        "趣味",
+        "美容",
+        "医療費",
+        "その他",
+      ],
       datasets: [
         {
           data: amount,
@@ -54,6 +64,10 @@ const PiePlot: React.FC = () => {
             "#4169E1",
             "#FFCE56",
             "#008B8B",
+            "#9ACD32",
+            "#F4A460",
+            "#DA70D6",
+            "#00BFFF",
             "#A9A9A9",
           ],
           hoverBackgroundColor: [
@@ -61,9 +75,17 @@ const PiePlot: React.FC = () => {
             "#4169E1",
             "#FFCE56",
             "#008B8B",
+            "#9ACD32",
+            "#F4A460",
+            "#DA70D6",
+            "#00BFFF",
             "#A9A9A9",
           ],
           borderColor: [
+            "transparent",
+            "transparent",
+            "transparent",
+            "transparent",
             "transparent",
             "transparent",
             "transparent",
