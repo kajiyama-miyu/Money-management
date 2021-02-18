@@ -23,12 +23,7 @@ import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import dayjs from "dayjs";
 import DateFnsUtils from "@date-io/date-fns";
 import { useDispatch } from "react-redux";
-import {
-  deleteIncome,
-  fetchUpdateData,
-  fetchUpdateIncome,
-} from "../store/moneyDataSlice";
-import { EditItemType } from "../components/AddScheduleDialog/edit";
+import { deleteIncome, fetchUpdateIncome } from "../store/moneyDataSlice";
 import { EditIncomeType } from "./AddScheduleDialog/incomeEdit";
 const spacer = { margin: "4px, 0" };
 
@@ -175,10 +170,7 @@ const EditIncome: React.FC<Props> = (props) => {
               fullWidth
               autoFocus
             >
-              <MenuItem value="食費">食費</MenuItem>
-              <MenuItem value="日用品">日用品</MenuItem>
-              <MenuItem value="衣服">衣服</MenuItem>
-              <MenuItem value="交通費">交通費</MenuItem>
+              <MenuItem value="給料">給料</MenuItem>
               <MenuItem value="その他">その他</MenuItem>
             </Select>
           </Grid>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,12 +22,8 @@ import { withStyles } from "@material-ui/styles";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import dayjs from "dayjs";
 import DateFnsUtils from "@date-io/date-fns";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteExpenses,
-  fetchUpdateData,
-  selectMoneyData,
-} from "../store/moneyDataSlice";
+import { useDispatch } from "react-redux";
+import { deleteExpenses, fetchUpdateData } from "../store/moneyDataSlice";
 import { EditItemType } from "../components/AddScheduleDialog/edit";
 const spacer = { margin: "4px, 0" };
 
@@ -177,6 +173,10 @@ const EditTable: React.FC<Props> = (props) => {
               <MenuItem value="日用品">日用品</MenuItem>
               <MenuItem value="衣服">衣服</MenuItem>
               <MenuItem value="交通費">交通費</MenuItem>
+              <MenuItem value="家賃・光熱費">家賃・光熱費</MenuItem>
+              <MenuItem value="趣味">趣味</MenuItem>
+              <MenuItem value="美容">美容</MenuItem>
+              <MenuItem value="医療費">医療費</MenuItem>
               <MenuItem value="その他">その他</MenuItem>
             </Select>
           </Grid>
