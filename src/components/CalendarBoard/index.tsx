@@ -77,6 +77,7 @@ const CalendarBoad: React.FC = React.memo(function CalendarBoad() {
   const incomeData = useSelector(selectIncome);
   const currentData = useSelector(selectCurrentSchedule);
   const currentIncome = useSelector(selectCurrentIncome);
+  console.log("expenseData", scheduleData);
 
   //カレンダーの表示とスケジュールの表示を同時に行う
   const callbackCalendar = useMemo(() => {
@@ -91,7 +92,7 @@ const CalendarBoad: React.FC = React.memo(function CalendarBoad() {
 
   const [changeDate, setChangeDate] = useState(dayjs());
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [userNum, setUserNum] = useState("abc");
+  const [userNum, setUserNum] = useState("abcde");
   const [edidDialog, setEditDialogOpen] = useState(false);
   const [incomeEditDialog, setIncomeEditDialog] = useState(false);
 
