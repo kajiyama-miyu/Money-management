@@ -43,7 +43,7 @@ type Props = {
   newDate: dayjs.Dayjs | null;
   isOpen: boolean;
   doClose: () => void;
-  incomeInfo: EditIncomeType;
+  incomeInfo: EditItemType;
 };
 
 const EditIncome: React.FC<Props> = (props) => {
@@ -76,7 +76,7 @@ const EditIncome: React.FC<Props> = (props) => {
 
   //金額をセット
   const handleAmountValue = (value: string) => {
-    setIncome(Number(value));
+    // setIncome(value);
   };
   //カテゴリーをセット
   const handleJenreValue = (value: string) => {
@@ -95,7 +95,7 @@ const EditIncome: React.FC<Props> = (props) => {
     setDate(newDay);
   };
 
-  const [arg, setArg] = useState<EditIncomeType>({
+  const [arg, setArg] = useState<EditItemType>({
     incomeId: 0,
     userNum: "",
     income: 0,

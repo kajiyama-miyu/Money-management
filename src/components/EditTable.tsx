@@ -71,7 +71,7 @@ const EditTable: React.FC<Props> = (props) => {
 
   //金額をセット
   const handleAmountValue = (value: string) => {
-    setAmount(Number(value));
+    // setAmount(value);
   };
   //カテゴリーをセット
   const handleJenreValue = (value: string) => {

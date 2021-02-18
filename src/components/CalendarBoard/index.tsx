@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useContext,
+} from "react";
 import {
   GridList,
   Typography,
@@ -26,7 +32,6 @@ import {
   fetchCurrentData,
   fetchCurrentIncome,
   selectIncome,
-  IncomeType,
 } from "../../redux/addSchedule/slice";
 import { setSchedules } from "../../services/schedule";
 import { currentScheduleSlice } from "../../redux/currentSchedule/slice";
@@ -40,6 +45,7 @@ import {
   selectCurrentSchedule,
   selectCurrentIncome,
 } from "../../redux/currentSchedule/slice";
+import { AuthContext } from "../../auth/AuthProvider";
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
@@ -77,7 +83,8 @@ const CalendarBoad: React.FC = React.memo(function CalendarBoad() {
   const incomeData = useSelector(selectIncome);
   const currentData = useSelector(selectCurrentSchedule);
   const currentIncome = useSelector(selectCurrentIncome);
-  console.log("expenseData", scheduleData);
+
+  const { uid } = useContext(AuthContext);
 
   //カレンダーの表示とスケジュールの表示を同時に行う
   const callbackCalendar = useMemo(() => {
@@ -92,7 +99,6 @@ const CalendarBoad: React.FC = React.memo(function CalendarBoad() {
 
   const [changeDate, setChangeDate] = useState(dayjs());
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [userNum, setUserNum] = useState("abcde");
   const [edidDialog, setEditDialogOpen] = useState(false);
   const [incomeEditDialog, setIncomeEditDialog] = useState(false);
 
@@ -139,7 +145,7 @@ const CalendarBoad: React.FC = React.memo(function CalendarBoad() {
 
   //収入のダイアログオープン
   const handleOpenCurrentIncomeData = useCallback(
-    (income: IncomeType, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    (income: ItemType, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       e.stopPropagation();
 
       dispatch(currentScheduleSlice.actions.setOpenCurrentIncomeDialog());
@@ -174,9 +180,9 @@ const CalendarBoad: React.FC = React.memo(function CalendarBoad() {
 
   //収入と支出のデータ取得
   useEffect(() => {
-    dispatch(fetchCurrentData({ userNum: userNum }));
-    dispatch(fetchCurrentIncome({ userNum: userNum }));
-  }, [dispatch, userNum]);
+    dispatch(fetchCurrentData({ userNum: uid }));
+    dispatch(fetchCurrentIncome({ userNum: uid }));
+  }, [dispatch, uid]);
 
   //翌月のカレンダーセット
   const setNextMonthData = useCallback((): void => {

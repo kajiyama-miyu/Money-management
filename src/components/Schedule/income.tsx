@@ -1,5 +1,5 @@
 import React from "react";
-import { IncomeType } from "../../redux/addSchedule/slice";
+import { ItemType } from "../../redux/addSchedule/slice";
 
 const styles: { [key: string]: React.CSSProperties } = {
   schedule: {
@@ -15,9 +15,9 @@ const styles: { [key: string]: React.CSSProperties } = {
 };
 
 type Props = {
-  income: IncomeType;
+  income: ItemType;
   onClickIncome: (
-    income: IncomeType,
+    income: ItemType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
 };

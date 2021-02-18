@@ -1,12 +1,11 @@
-import React, { ContextType, createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import firebase from "../firebase";
 
 type AuthContextProps = {
   currentUser: firebase.User | null | undefined;
   login: () => void;
   logout: () => void;
-  uid: string;
-  displayName: string | null;
+  uid: string | null;
 };
 
 export const AuthContext = createContext<AuthContextProps>({
@@ -14,13 +13,11 @@ export const AuthContext = createContext<AuthContextProps>({
   login: () => {},
   logout: () => {},
   uid: "",
-  displayName: "",
 });
 
 export const AuthProvider: React.FC = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<firebase.User | null>(null);
-  const [uid, setUid] = useState<string>("a");
-  const [displayName, setdisplayName] = useState<string | null>("a");
+  const [uid, setUid] = useState<string | null>(null);
 
   const login = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -37,7 +34,9 @@ export const AuthProvider: React.FC = ({ children }) => {
         if (user) {
           setCurrentUser(user);
           setUid(user.uid);
-          setdisplayName(user.displayName);
+        } else {
+          setCurrentUser(null);
+          setUid(null);
         }
       }),
     []
@@ -50,7 +49,6 @@ export const AuthProvider: React.FC = ({ children }) => {
         logout: logout,
         currentUser,
         uid,
-        displayName,
       }}
     >
       {children}

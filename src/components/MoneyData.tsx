@@ -3,7 +3,12 @@ import MaterialTable from "material-table";
 import { useSelector } from "react-redux";
 import { selectMoneyData } from "../store/moneyDataSlice";
 
-type MoneyInfo = { amount: number; jenre: string; date: Date; details: string };
+type MoneyInfo = {
+  amount: number | undefined;
+  jenre: string;
+  date: Date;
+  details: string;
+};
 
 const MoneyData: React.FC = () => {
   const moneyData = useSelector(selectMoneyData);

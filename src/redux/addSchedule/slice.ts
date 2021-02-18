@@ -1,26 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { RootState } from "../rootReducer";
-import {
-  AddIncomeType,
-  AddItemType,
-} from "../../components/AddScheduleDialog/index";
+import { AddItemType } from "../../components/AddScheduleDialog/index";
 import { EditItemType } from "../../components/AddScheduleDialog/edit";
-import { EditIncomeType } from "../../components/AddScheduleDialog/incomeEdit";
 
 export type ItemType = {
-  moneyId: number;
+  moneyId?: number | undefined;
+  incomeId?: number | undefined;
   userNum: string;
-  amount: number;
-  jenre: string;
-  details: string;
-  date: Date;
-};
-
-export type IncomeType = {
-  incomeId: number;
-  userNum: string;
-  income: number;
+  amount?: number;
+  income?: number;
   jenre: string;
   details: string;
   date: Date;
@@ -28,7 +17,7 @@ export type IncomeType = {
 
 export type ScheduleState = {
   items: Array<ItemType>;
-  incomeItems: Array<IncomeType>;
+  incomeItems: Array<ItemType>;
   isLoading: boolean;
 };
 
@@ -60,9 +49,9 @@ export const fetchMoneyData = createAsyncThunk(
 //収入の保存
 export const postIncome = createAsyncThunk(
   "schwdules/postIncome",
-  async (arg: AddIncomeType) => {
+  async (arg: AddItemType) => {
     const { userNum, income, jenre, details, date } = arg;
-    const { data } = await axios.post<IncomeType>(
+    const { data } = await axios.post<ItemType>(
       "http://localhost:8080/postIncome",
       {
         userNum: userNum,
@@ -79,7 +68,7 @@ export const postIncome = createAsyncThunk(
 //支出の取得
 export const fetchCurrentData = createAsyncThunk(
   "schedules/getSchedule",
-  async (arg: { userNum: string }) => {
+  async (arg: { userNum: string | null }) => {
     const { userNum } = arg;
 
     const { data } = await axios.get<Array<ItemType>>(
@@ -98,9 +87,9 @@ export const fetchCurrentData = createAsyncThunk(
 //収入の取得
 export const fetchCurrentIncome = createAsyncThunk(
   "schedules/getIncome",
-  async (arg: { userNum: string }) => {
+  async (arg: { userNum: string | null }) => {
     const { userNum } = arg;
-    const { data } = await axios.get<Array<IncomeType>>(
+    const { data } = await axios.get<Array<ItemType>>(
       "http://localhost:8080/getIncome",
       {
         params: {
@@ -136,9 +125,10 @@ export const updateExpense = createAsyncThunk(
 //収入の更新
 export const updateIncome = createAsyncThunk(
   "schedule/updateIncome",
-  async (arg: EditIncomeType) => {
+  async (arg: EditItemType) => {
     const { incomeId, userNum, income, jenre, details, date } = arg;
-    const { data } = await axios.put<IncomeType>(
+
+    const { data } = await axios.put<ItemType>(
       "http://localhost:8080/putIncome",
       {
         incomeId: incomeId,
@@ -156,7 +146,7 @@ export const updateIncome = createAsyncThunk(
 //支出削除
 export const deleteCurrentData = createAsyncThunk(
   "schedules/delete",
-  async (arg: { moneyId: number }) => {
+  async (arg: { moneyId?: number | undefined }) => {
     const { moneyId } = arg;
     console.log("delete", moneyId);
     const { data } = await axios.get<number>(
@@ -174,7 +164,7 @@ export const deleteCurrentData = createAsyncThunk(
 //収入削除
 export const deleteCurrentIncomeData = createAsyncThunk(
   "schedules/deleteIncome",
-  async (arg: { incomeId: number }) => {
+  async (arg: { incomeId?: number | undefined }) => {
     const { incomeId } = arg;
     const { data } = await axios.get<number>(
       "http://localhost:8080/deleteIncome",

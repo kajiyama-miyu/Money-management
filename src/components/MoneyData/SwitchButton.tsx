@@ -62,9 +62,9 @@ const SwitchButton: React.FC = () => {
   }, [moneyData]);
 
   const incomeList = useMemo(() => {
-    const incomeDataList: Array<EditIncomeType> = [];
+    const incomeDataList: Array<EditItemType> = [];
     for (var i of incomeData) {
-      const data: EditIncomeType = {
+      const data: EditItemType = {
         incomeId: i.incomeId,
         userNum: i.userNum,
         income: i.income,
@@ -88,7 +88,7 @@ const SwitchButton: React.FC = () => {
     setMoneyInfo(rowData);
   };
 
-  const onClickIncome = (rowData: EditIncomeType) => {
+  const onClickIncome = (rowData: EditItemType) => {
     setDialogOpen(true);
     setIncomeInfo(rowData);
   };
