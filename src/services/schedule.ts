@@ -9,8 +9,6 @@ export const setSchedules = (
   schedules: Array<ItemType>,
   income: Array<IncomeType>
 ) => {
-  // const formatedSchedule = schedules.map((d: ItemType) => formatSchedule(d));
-
   return calendar.map((c) => ({
     date: c,
     schedules: schedules.filter((e) => isSameDay(e.date, c)),
