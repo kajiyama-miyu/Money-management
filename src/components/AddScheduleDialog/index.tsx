@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState, useContext } from "react";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +23,7 @@ import dayjs from "dayjs";
 import DateFnsUtils from "@date-io/date-fns";
 import { fetchMoneyData, postIncome } from "../../redux/addSchedule/slice";
 import { useDispatch } from "react-redux";
+import { AuthContext } from "../../auth/AuthProvider";
 
 const spacer = { margin: "4px, 0" };
 
@@ -72,13 +73,13 @@ export type AddIncomeType = {
 const AddScheduleDialog: React.FC<Props> = React.memo(
   function AddScheduleDialog(props) {
     const { newDate, isOpen, doClose } = props;
+    const { uid } = useContext(AuthContext);
 
     const [amount, setAmount] = useState(0);
     const [expenseJenre, setExpenseJenre] = useState("食費");
     const [incomeJenre, setIncomeJenre] = useState("給料");
     const [details, setDetails] = useState("");
     const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs());
-    const [userNum, seUserNum] = useState<string>("abc");
     const [dialogStatus, setDialogStatus] = useState(true);
     const [select, setSelect] = useState(
       <Grid item xs={10}>
@@ -94,6 +95,10 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
           <MenuItem value="日用品">日用品</MenuItem>
           <MenuItem value="衣服">衣服</MenuItem>
           <MenuItem value="交通費">交通費</MenuItem>
+          <MenuItem value="家賃・光熱費">家賃・光熱費</MenuItem>
+          <MenuItem value="趣味">趣味</MenuItem>
+          <MenuItem value="美容">美容</MenuItem>
+          <MenuItem value="医療費">医療費</MenuItem>
           <MenuItem value="その他">その他</MenuItem>
         </Select>
       </Grid>
@@ -143,6 +148,10 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
             <MenuItem value="日用品">日用品</MenuItem>
             <MenuItem value="衣服">衣服</MenuItem>
             <MenuItem value="交通費">交通費</MenuItem>
+            <MenuItem value="家賃・光熱費">家賃・光熱費</MenuItem>
+            <MenuItem value="趣味">趣味</MenuItem>
+            <MenuItem value="美容">美容</MenuItem>
+            <MenuItem value="医療費">医療費</MenuItem>
             <MenuItem value="その他">その他</MenuItem>
           </Select>
         </Grid>
@@ -189,7 +198,7 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
     useEffect(() => {
       if (date != null && dialogStatus === true) {
         setArg({
-          userNum: userNum,
+          userNum: uid,
           amount: amount,
           jenre: expenseJenre,
           details: details,
@@ -197,22 +206,14 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
         });
       } else {
         setArgIncome({
-          userNum: userNum,
+          userNum: uid,
           income: amount,
           jenre: incomeJenre,
           details: details,
           date: date,
         });
       }
-    }, [
-      userNum,
-      amount,
-      expenseJenre,
-      details,
-      date,
-      incomeJenre,
-      dialogStatus,
-    ]);
+    }, [uid, amount, expenseJenre, details, date, incomeJenre, dialogStatus]);
 
     const handleSaveData = () => {
       if (dialogStatus) {
@@ -254,16 +255,16 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
             <MenuItem value="日用品">日用品</MenuItem>
             <MenuItem value="衣服">衣服</MenuItem>
             <MenuItem value="交通費">交通費</MenuItem>
+            <MenuItem value="家賃・光熱費">家賃・光熱費</MenuItem>
+            <MenuItem value="趣味">趣味</MenuItem>
+            <MenuItem value="美容">美容</MenuItem>
+            <MenuItem value="医療費">医療費</MenuItem>
             <MenuItem value="その他">その他</MenuItem>
           </Select>
         </Grid>
       );
     };
 
-    // if (process.env.NODE_ENV !== "production") {
-    //   const { whyDidYouUpdate } = require("why-did-you-update");
-    //   whyDidYouUpdate(React);
-    // }
     return (
       <Dialog open={isOpen} onClose={handleClose} maxWidth="xs" fullWidth>
         <DialogActions>
