@@ -24,6 +24,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import { fetchMoneyData, postIncome } from "../../redux/addSchedule/slice";
 import { useDispatch } from "react-redux";
 import { AuthContext } from "../../auth/AuthProvider";
+import { useForm } from "react-hook-form";
 
 const spacer = { margin: "4px, 0" };
 
@@ -45,25 +46,17 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: "#4169E1",
     border: "1px solid #4169E1",
   },
+  title: {
+    marginBottom: "20px",
+  },
 };
-
-const Title = withStyles({
-  root: { marginBottom: 32, fontSize: 22 },
-})(Input);
 
 type Props = { newDate: dayjs.Dayjs; isOpen: boolean; doClose: () => void };
 
 export type AddItemType = {
-  userNum: string;
-  amount: number;
-  jenre: string;
-  details: string;
-  date: dayjs.Dayjs | null;
-};
-
-export type AddIncomeType = {
-  userNum: string;
-  income: number;
+  userNum: string | null;
+  amount?: number;
+  income?: number;
   jenre: string;
   details: string;
   date: dayjs.Dayjs | null;
@@ -74,8 +67,11 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
   function AddScheduleDialog(props) {
     const { newDate, isOpen, doClose } = props;
     const { uid } = useContext(AuthContext);
+    const { register, handleSubmit, errors, formState } = useForm<AddItemType>({
+      mode: "onChange",
+    });
 
-    const [amount, setAmount] = useState(0);
+    const [amount, setAmount] = useState("");
     const [expenseJenre, setExpenseJenre] = useState("食費");
     const [incomeJenre, setIncomeJenre] = useState("給料");
     const [details, setDetails] = useState("");
@@ -110,7 +106,7 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
 
     //金額をセット
     const handleAmountValue = (value: string) => {
-      setAmount(Number(value));
+      setAmount(value);
     };
     //カテゴリーをセット
     const handleExpenseJenreValue = (value: string) => {
@@ -180,13 +176,6 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
     const [arg, setArg] = useState<AddItemType>({
       userNum: "",
       amount: 0,
-      jenre: "",
-      details: "",
-      date: dayjs(),
-    });
-
-    const [argIncome, setArgIncome] = useState<AddIncomeType>({
-      userNum: "",
       income: 0,
       jenre: "",
       details: "",
@@ -199,15 +188,15 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
       if (date != null && dialogStatus === true) {
         setArg({
           userNum: uid,
-          amount: amount,
+          amount: Number(amount),
           jenre: expenseJenre,
           details: details,
           date: date,
         });
       } else {
-        setArgIncome({
+        setArg({
           userNum: uid,
-          income: amount,
+          income: Number(amount),
           jenre: incomeJenre,
           details: details,
           date: date,
@@ -216,27 +205,31 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
     }, [uid, amount, expenseJenre, details, date, incomeJenre, dialogStatus]);
 
     const handleSaveData = () => {
+      console.log("arg", arg);
       if (dialogStatus) {
         dispatch(fetchMoneyData(arg));
       } else {
-        dispatch(postIncome(argIncome));
+        dispatch(postIncome(arg));
       }
 
       doClose();
 
-      setAmount(0);
+      setAmount("");
       setExpenseJenre("食費");
       setIncomeJenre("給料");
       setDetails("");
       setDate(newDate);
+      setDialogStatus(true);
     };
+
+    const onSubmit = (data: AddItemType): void => console.log(data);
 
     const handleClose = () => {
       setDialogStatus(true);
 
       doClose();
 
-      setAmount(0);
+      setAmount("");
       setExpenseJenre("食費");
       setIncomeJenre("給料");
       setDetails("");
@@ -266,109 +259,119 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
     };
 
     return (
-      <Dialog open={isOpen} onClose={handleClose} maxWidth="xs" fullWidth>
-        <DialogActions>
-          <div style={styles.closeButton}>
-            <IconButton onClick={handleClose} size="small">
-              <Close />
-            </IconButton>
-          </div>
-        </DialogActions>
-        <Grid container justify="center" alignItems="center">
-          <Grid item>
-            <Button
-              variant="outlined"
-              style={dialogStatus ? styles.expenseButton : styles.button}
-              onClick={() => handleChangeExpense()}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Dialog open={isOpen} onClose={handleClose} maxWidth="xs" fullWidth>
+          <DialogActions>
+            <div style={styles.closeButton}>
+              <IconButton onClick={handleClose} size="small">
+                <Close />
+              </IconButton>
+            </div>
+          </DialogActions>
+          <Grid container justify="center" alignItems="center">
+            <Grid item>
+              <Button
+                variant="outlined"
+                style={dialogStatus ? styles.expenseButton : styles.button}
+                onClick={() => handleChangeExpense()}
+              >
+                支出
+              </Button>
+              <Button
+                variant="outlined"
+                style={dialogStatus ? styles.button : styles.incomeButton}
+                onClick={() => handleChangeIncome()}
+              >
+                収入
+              </Button>
+            </Grid>
+          </Grid>
+          <DialogContent>
+            <TextField
+              autoFocus
+              fullWidth
+              type="text"
+              placeholder="金額"
+              value={amount}
+              name="amount"
+              inputRef={register({ required: true, pattern: /^[0-9]+$/ })}
+              error={Boolean(errors.amount)}
+              helperText={errors.amount && "数字を入力してください"}
+              style={styles.title}
+              onChange={(e) => {
+                handleAmountValue(e.target.value);
+              }}
+            />
+
+            <Grid
+              container
+              spacing={1}
+              alignItems="center"
+              justify="space-between"
             >
-              支出
-            </Button>
-            <Button
-              variant="outlined"
-              style={dialogStatus ? styles.button : styles.incomeButton}
-              onClick={() => handleChangeIncome()}
+              <Grid item>
+                <CategoryOutlined />
+              </Grid>
+              {select}
+            </Grid>
+            <Grid
+              container
+              spacing={1}
+              alignItems="center"
+              justify="space-between"
             >
-              収入
-            </Button>
-          </Grid>
-        </Grid>
-        <DialogContent>
-          <Title
-            autoFocus
-            fullWidth
-            placeholder="金額"
-            value={amount}
-            onChange={(e) => {
-              handleAmountValue(e.target.value);
-            }}
-          />
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-            justify="space-between"
-          >
-            <Grid item>
-              <CategoryOutlined />
-            </Grid>
-            {select}
-          </Grid>
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-            justify="space-between"
-          >
-            <Grid item>
-              <NoteOutlined />
-            </Grid>
-            <Grid item xs={10}>
-              <TextField
-                style={spacer}
-                fullWidth
-                placeholder="メモ"
-                value={details}
-                onChange={(e) => {
-                  handleDetailsValue(e.target.value);
-                }}
-              />
-            </Grid>
-          </Grid>
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-            justify="space-between"
-          >
-            <Grid item>
-              <AccessTime />
-            </Grid>
-            <Grid item xs={10}>
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <DatePicker
-                  value={date}
-                  onChange={(d) => handleDateValue(d)}
-                  variant="inline"
-                  format="yyyy年M月d日"
-                  animateYearScrolling
-                  disableToolbar
-                  fullWidth
+              <Grid item>
+                <NoteOutlined />
+              </Grid>
+              <Grid item xs={10}>
+                <TextField
                   style={spacer}
+                  fullWidth
+                  placeholder="メモ"
+                  value={details}
+                  onChange={(e) => {
+                    handleDetailsValue(e.target.value);
+                  }}
                 />
-              </MuiPickersUtilsProvider>
+              </Grid>
             </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            style={styles.saveButton}
-            variant="outlined"
-            onClick={() => handleSaveData()}
-          >
-            保存
-          </Button>
-        </DialogActions>
-      </Dialog>
+            <Grid
+              container
+              spacing={1}
+              alignItems="center"
+              justify="space-between"
+            >
+              <Grid item>
+                <AccessTime />
+              </Grid>
+              <Grid item xs={10}>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  <DatePicker
+                    value={date}
+                    onChange={(d) => handleDateValue(d)}
+                    variant="inline"
+                    format="yyyy年M月d日"
+                    animateYearScrolling
+                    disableToolbar
+                    fullWidth
+                    style={spacer}
+                  />
+                </MuiPickersUtilsProvider>
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              style={styles.saveButton}
+              variant="outlined"
+              disabled={!formState.isValid}
+              onClick={handleSaveData}
+            >
+              保存
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </form>
     );
   }
 );
