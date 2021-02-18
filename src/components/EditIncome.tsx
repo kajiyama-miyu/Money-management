@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -23,22 +23,12 @@ import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import dayjs from "dayjs";
 import DateFnsUtils from "@date-io/date-fns";
 import { useDispatch } from "react-redux";
-<<<<<<< HEAD
-import {
-  deleteIncome,
-  fetchUpdateData,
-  fetchUpdateIncome,
-} from "../store/moneyDataSlice";
-import { EditItemType } from "../components/AddScheduleDialog/edit";
-import { EditIncomeType } from "./AddScheduleDialog/incomeEdit";
-=======
 import { deleteIncome, fetchUpdateIncome } from "../store/moneyDataSlice";
 
 import { AuthContext } from "../auth/AuthProvider";
 import { EditIncomeType } from "./MoneyData/SwitchButton";
 import { useForm } from "react-hook-form";
 
->>>>>>> 911dd52c78a8976853e85b7d75d57e62743b2cd1
 const spacer = { margin: "4px, 0" };
 
 const styles: { [key: string]: React.CSSProperties } = {
@@ -66,9 +56,6 @@ const EditIncome: React.FC<Props> = (props) => {
   const [jenre, setJenre] = useState(incomeInfo.jenre);
   const [details, setDetails] = useState(incomeInfo.details);
   const [date, setDate] = useState<dayjs.Dayjs | null>(incomeInfo.date);
-<<<<<<< HEAD
-  const [userNum, seUserNum] = useState<string>("abcde");
-=======
   const [userNum, seUserNum] = useState<string | null>("");
 
   const { uid } = useContext(AuthContext);
@@ -77,7 +64,6 @@ const EditIncome: React.FC<Props> = (props) => {
       mode: "onChange",
     }
   );
->>>>>>> 911dd52c78a8976853e85b7d75d57e62743b2cd1
 
   useEffect(() => {
     setIncomeId(incomeInfo.incomeId);
@@ -85,21 +71,19 @@ const EditIncome: React.FC<Props> = (props) => {
     setJenre(incomeInfo.jenre);
     setDetails(incomeInfo.details);
     setDate(incomeInfo.date);
+    seUserNum(uid);
   }, [
     incomeInfo.incomeId,
     incomeInfo.income,
     incomeInfo.jenre,
     incomeInfo.details,
     incomeInfo.date,
+    uid,
   ]);
 
   //金額をセット
   const handleAmountValue = (value: string) => {
-<<<<<<< HEAD
-    setIncome(Number(value));
-=======
     setIncome(value);
->>>>>>> 911dd52c78a8976853e85b7d75d57e62743b2cd1
   };
   //カテゴリーをセット
   const handleJenreValue = (value: string) => {
@@ -151,7 +135,6 @@ const EditIncome: React.FC<Props> = (props) => {
       details: details,
       date: date!,
     });
-    console.log("arg", arg);
     dispatch(fetchUpdateIncome(arg));
 
     doClose();
@@ -159,7 +142,6 @@ const EditIncome: React.FC<Props> = (props) => {
 
   //削除の処理
   const handleDeteleSchedule = () => {
-    console.log("incomeId", arg.incomeId);
     dispatch(deleteIncome(arg));
     doClose();
   };
@@ -203,10 +185,7 @@ const EditIncome: React.FC<Props> = (props) => {
               fullWidth
               autoFocus
             >
-              <MenuItem value="食費">食費</MenuItem>
-              <MenuItem value="日用品">日用品</MenuItem>
-              <MenuItem value="衣服">衣服</MenuItem>
-              <MenuItem value="交通費">交通費</MenuItem>
+              <MenuItem value="給料">給料</MenuItem>
               <MenuItem value="その他">その他</MenuItem>
             </Select>
           </Grid>
