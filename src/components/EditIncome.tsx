@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +25,8 @@ import DateFnsUtils from "@date-io/date-fns";
 import { useDispatch } from "react-redux";
 import { deleteIncome, fetchUpdateIncome } from "../store/moneyDataSlice";
 import { EditIncomeType } from "./AddScheduleDialog/incomeEdit";
+import { AuthContext } from "../auth/AuthProvider";
+
 const spacer = { margin: "4px, 0" };
 
 const styles: { [key: string]: React.CSSProperties } = {
@@ -52,7 +54,9 @@ const EditIncome: React.FC<Props> = (props) => {
   const [jenre, setJenre] = useState(incomeInfo.jenre);
   const [details, setDetails] = useState(incomeInfo.details);
   const [date, setDate] = useState<dayjs.Dayjs | null>(incomeInfo.date);
-  const [userNum, seUserNum] = useState<string>("abcde");
+  const [userNum, seUserNum] = useState<string>("");
+
+  const { uid } = useContext(AuthContext);
 
   useEffect(() => {
     setIncomeId(incomeInfo.incomeId);
@@ -60,12 +64,14 @@ const EditIncome: React.FC<Props> = (props) => {
     setJenre(incomeInfo.jenre);
     setDetails(incomeInfo.details);
     setDate(incomeInfo.date);
+    seUserNum(uid);
   }, [
     incomeInfo.incomeId,
     incomeInfo.income,
     incomeInfo.jenre,
     incomeInfo.details,
     incomeInfo.date,
+    uid,
   ]);
 
   //金額をセット
@@ -122,7 +128,6 @@ const EditIncome: React.FC<Props> = (props) => {
       details: details,
       date: date!,
     });
-    console.log("arg", arg);
     dispatch(fetchUpdateIncome(arg));
 
     doClose();
@@ -130,7 +135,6 @@ const EditIncome: React.FC<Props> = (props) => {
 
   //削除の処理
   const handleDeteleSchedule = () => {
-    console.log("incomeId", arg.incomeId);
     dispatch(deleteIncome(arg));
     doClose();
   };
