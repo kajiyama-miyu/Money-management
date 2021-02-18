@@ -19,7 +19,7 @@ const initialState: amountState = {
 //支出の合計を取得
 export const fetchInitialState = createAsyncThunk(
   "covid/getExpenses",
-  async (arg: { userNum: string; month: number; year: number }) => {
+  async (arg: { userNum: string | null; month: number; year: number }) => {
     const { userNum, month, year } = arg;
 
     const { data } = await axios.get<number>(
@@ -39,7 +39,7 @@ export const fetchInitialState = createAsyncThunk(
 //収入の合計を取得
 export const fetchTotalIncome = createAsyncThunk(
   "covid/getIncome",
-  async (arg: { userNum: string; month: number; year: number }) => {
+  async (arg: { userNum: string | null; month: number; year: number }) => {
     const { userNum, month, year } = arg;
     const { data } = await axios.get<number>(
       "http://localhost:8080/getTotalIncome",
