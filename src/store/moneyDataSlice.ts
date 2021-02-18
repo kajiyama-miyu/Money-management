@@ -6,7 +6,7 @@ import { EditItemType } from "../components/AddScheduleDialog/edit";
 import { EditIncomeType } from "../components/MoneyData/SwitchButton";
 
 type MONEY_DATA = Array<ItemType>;
-type INCOME_DATA = Array<EditItemType>;
+type INCOME_DATA = Array<EditIncomeType>;
 
 // state
 export type moneyState = {
@@ -24,13 +24,13 @@ interface moneyResponse {
   moneyInfoList: Array<ItemType>;
 }
 interface incomeResponse {
-  incomeInfoList: Array<EditItemType>;
+  incomeInfoList: Array<EditIncomeType>;
 }
 
 // createAsyncThunk: 非同期に対応したAction Creator
 export const fetchMoneyData = createAsyncThunk(
   "covid/getMoneyData",
-  async (arg: { userNum: string; month: number; year: number }) => {
+  async (arg: { userNum: string | null; month: number; year: number }) => {
     const { userNum, month, year } = arg;
     // GenericsでAPIから取得するデータ型を保証
     const { data } = await axios.get<moneyResponse>(
@@ -50,7 +50,7 @@ export const fetchMoneyData = createAsyncThunk(
 //収入情報を取ってくる非同期
 export const fetchIncomeData = createAsyncThunk(
   "covid/getIncomeData",
-  async (arg: { userNum: string; month: number; year: number }) => {
+  async (arg: { userNum: string | null; month: number; year: number }) => {
     const { userNum, month, year } = arg;
     // GenericsでAPIから取得するデータ型を保証
     const { data } = await axios.get<incomeResponse>(
@@ -90,9 +90,9 @@ export const fetchUpdateData = createAsyncThunk(
 //収入を編集する
 export const fetchUpdateIncome = createAsyncThunk(
   "covid/updateIncome",
-  async (arg: EditItemType) => {
+  async (arg: EditIncomeType) => {
     const { incomeId, userNum, income, jenre, details, date } = arg;
-    const { data } = await axios.post<EditItemType>(
+    const { data } = await axios.post<EditIncomeType>(
       "http://localhost:8080/updateIncome",
       {
         incomeId,

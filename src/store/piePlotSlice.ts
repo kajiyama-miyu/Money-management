@@ -22,7 +22,7 @@ interface pieResponse {
 // createAsyncThunk: 非同期に対応したAction Creator
 export const fetchDataDaily = createAsyncThunk(
   "covid/getPieChart",
-  async (arg: { userNum: string; month: number; year: number }) => {
+  async (arg: { userNum: string | null; month: number; year: number }) => {
     const { userNum, month, year } = arg;
     // GenericsでAPIから取得するデータ型を保証
     const { data } = await axios.get<pieResponse>(

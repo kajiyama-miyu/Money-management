@@ -7,7 +7,7 @@ import { EditItemType } from "../../components/AddScheduleDialog/edit";
 export type ItemType = {
   moneyId?: number | undefined;
   incomeId?: number | undefined;
-  userNum: string;
+  userNum: string | null;
   amount?: number;
   income?: number;
   jenre: string;
