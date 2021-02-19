@@ -17,7 +17,6 @@ import {
   AccessTime,
   Close,
 } from "@material-ui/icons";
-import { withStyles } from "@material-ui/styles";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import dayjs from "dayjs";
 import DateFnsUtils from "@date-io/date-fns";
@@ -87,7 +86,6 @@ const UpDateMoneyDialog: React.FC<Props> = React.memo((props) => {
 
   //編集したいデータをvalueにつめる(条件分岐で支出か収入かを分ける)
   useEffect(() => {
-    console.log("setNewData");
     if (newData !== null) {
       for (let n of newData) {
         setMoneyId(n.moneyId);
