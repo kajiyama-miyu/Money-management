@@ -16,7 +16,6 @@ const PrivateRoute: React.FC<Props> = ({
 
   const Component = currentUser ? RouteCmponent : Login;
 
-  console.log("currentUser", currentUser);
   return <Route {...options} component={Component} />;
 };
 
