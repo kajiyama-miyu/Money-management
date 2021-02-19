@@ -25,7 +25,6 @@ const PiePlot: React.FC = () => {
 
   const onClickNextMonth = () => {
     const day = dayjs(`${year}-${month}`).add(1, "month");
-    console.log(day);
     setYear(day.year());
     setMonth(day.month() + 1);
     setArg({ userNum: uid, year: day.year(), month: day.month() + 1 });
