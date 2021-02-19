@@ -1,11 +1,10 @@
-import React, { useEffect, useCallback, useState, useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Dialog,
   DialogContent,
   TextField,
   DialogActions,
   Button,
-  Input,
   Grid,
   Select,
   MenuItem,
@@ -17,7 +16,6 @@ import {
   AccessTime,
   Close,
 } from "@material-ui/icons";
-import { withStyles } from "@material-ui/styles";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import dayjs from "dayjs";
 import DateFnsUtils from "@date-io/date-fns";
@@ -77,28 +75,7 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
     const [details, setDetails] = useState("");
     const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs());
     const [dialogStatus, setDialogStatus] = useState(true);
-    const [select, setSelect] = useState(
-      <Grid item xs={10}>
-        <Select
-          value={expenseJenre}
-          onChange={(e) => {
-            handleExpenseJenreValue(e.target.value as string);
-          }}
-          fullWidth
-          autoFocus
-        >
-          <MenuItem value="食費">食費</MenuItem>
-          <MenuItem value="日用品">日用品</MenuItem>
-          <MenuItem value="衣服">衣服</MenuItem>
-          <MenuItem value="交通費">交通費</MenuItem>
-          <MenuItem value="家賃・光熱費">家賃・光熱費</MenuItem>
-          <MenuItem value="趣味">趣味</MenuItem>
-          <MenuItem value="美容">美容</MenuItem>
-          <MenuItem value="医療費">医療費</MenuItem>
-          <MenuItem value="その他">その他</MenuItem>
-        </Select>
-      </Grid>
-    );
+    const [incomeDialogStatus, setIncomeDialogStatus] = useState(false);
 
     useEffect(() => {
       setDate(newDate);
@@ -128,50 +105,15 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
       setDate(newDay);
     };
 
-    const handleChangeExpense = useCallback(() => {
+    const handleChangeExpense = () => {
       setDialogStatus(true);
-      setSelect(
-        <Grid item xs={10}>
-          <Select
-            value={expenseJenre}
-            onChange={(e) => {
-              handleExpenseJenreValue(e.target.value as string);
-            }}
-            fullWidth
-            autoFocus
-          >
-            <MenuItem value="食費">食費</MenuItem>
-            <MenuItem value="日用品">日用品</MenuItem>
-            <MenuItem value="衣服">衣服</MenuItem>
-            <MenuItem value="交通費">交通費</MenuItem>
-            <MenuItem value="家賃・光熱費">家賃・光熱費</MenuItem>
-            <MenuItem value="趣味">趣味</MenuItem>
-            <MenuItem value="美容">美容</MenuItem>
-            <MenuItem value="医療費">医療費</MenuItem>
-            <MenuItem value="その他">その他</MenuItem>
-          </Select>
-        </Grid>
-      );
-    }, [expenseJenre]);
+      setIncomeDialogStatus(false);
+    };
 
-    const handleChangeIncome = useCallback(() => {
+    const handleChangeIncome = () => {
       setDialogStatus(false);
-      setSelect(
-        <Grid item xs={10}>
-          <Select
-            value={incomeJenre}
-            onChange={(e) => {
-              handleIncomeJenreValue(e.target.value as string);
-            }}
-            fullWidth
-            autoFocus
-          >
-            <MenuItem value="給料">給料</MenuItem>
-            <MenuItem value="その他">その他</MenuItem>
-          </Select>
-        </Grid>
-      );
-    }, [incomeJenre]);
+      setIncomeDialogStatus(true);
+    };
 
     const [arg, setArg] = useState<AddItemType>({
       userNum: "",
@@ -219,12 +161,14 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
       setDetails("");
       setDate(newDate);
       setDialogStatus(true);
+      setIncomeDialogStatus(false);
     };
 
     const onSubmit = (data: AddItemType): void => console.log(data);
 
     const handleClose = () => {
       setDialogStatus(true);
+      setIncomeDialogStatus(false);
 
       doClose();
 
@@ -233,28 +177,6 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
       setIncomeJenre("給料");
       setDetails("");
       setDate(newDate);
-      setSelect(
-        <Grid item xs={10}>
-          <Select
-            value={expenseJenre}
-            onChange={(e) => {
-              handleExpenseJenreValue(e.target.value as string);
-            }}
-            fullWidth
-            autoFocus
-          >
-            <MenuItem value="食費">食費</MenuItem>
-            <MenuItem value="日用品">日用品</MenuItem>
-            <MenuItem value="衣服">衣服</MenuItem>
-            <MenuItem value="交通費">交通費</MenuItem>
-            <MenuItem value="家賃・光熱費">家賃・光熱費</MenuItem>
-            <MenuItem value="趣味">趣味</MenuItem>
-            <MenuItem value="美容">美容</MenuItem>
-            <MenuItem value="医療費">医療費</MenuItem>
-            <MenuItem value="その他">その他</MenuItem>
-          </Select>
-        </Grid>
-      );
     };
 
     return (
@@ -312,7 +234,43 @@ const AddScheduleDialog: React.FC<Props> = React.memo(
               <Grid item>
                 <CategoryOutlined />
               </Grid>
-              {select}
+              {dialogStatus && (
+                <Grid item xs={10}>
+                  <Select
+                    value={expenseJenre}
+                    onChange={(e) => {
+                      handleExpenseJenreValue(e.target.value as string);
+                    }}
+                    fullWidth
+                    autoFocus
+                  >
+                    <MenuItem value="食費">食費</MenuItem>
+                    <MenuItem value="日用品">日用品</MenuItem>
+                    <MenuItem value="衣服">衣服</MenuItem>
+                    <MenuItem value="交通費">交通費</MenuItem>
+                    <MenuItem value="家賃・光熱費">家賃・光熱費</MenuItem>
+                    <MenuItem value="趣味">趣味</MenuItem>
+                    <MenuItem value="美容">美容</MenuItem>
+                    <MenuItem value="医療費">医療費</MenuItem>
+                    <MenuItem value="その他">その他</MenuItem>
+                  </Select>
+                </Grid>
+              )}
+              {incomeDialogStatus && (
+                <Grid item xs={10}>
+                  <Select
+                    value={incomeJenre}
+                    onChange={(e) => {
+                      handleIncomeJenreValue(e.target.value as string);
+                    }}
+                    fullWidth
+                    autoFocus
+                  >
+                    <MenuItem value="給料">給料</MenuItem>
+                    <MenuItem value="その他">その他</MenuItem>
+                  </Select>
+                </Grid>
+              )}
             </Grid>
             <Grid
               container
