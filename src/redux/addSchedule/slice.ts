@@ -79,7 +79,6 @@ export const fetchCurrentData = createAsyncThunk(
         },
       }
     );
-    console.log("data", data);
     return { data: data };
   }
 );
